@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
@@ -17,6 +16,7 @@
     --accent-blue: #4488ff;
     --accent-yellow: #ffcc00;
     --accent-orange: #ff8844;
+    --accent-cyan: #00d4ff;
     --text: #c8d8f0;
     --text-dim: #5a7090;
     --text-bright: #e8f0ff;
@@ -24,811 +24,314 @@
     --sans: 'IBM Plex Sans JP', sans-serif;
   }
 
-- { margin: 0; padding: 0; box-sizing: border-box; }
-
-body {
-background: var(–bg);
-color: var(–text);
-font-family: var(–mono);
-min-height: 100vh;
-overflow-x: hidden;
-}
-
-/* Grid noise texture */
-body::before {
-content: ‘’;
-position: fixed;
-inset: 0;
-background-image:
-linear-gradient(rgba(68,136,255,0.03) 1px, transparent 1px),
-linear-gradient(90deg, rgba(68,136,255,0.03) 1px, transparent 1px);
-background-size: 40px 40px;
-pointer-events: none;
-z-index: 0;
-}
-
-.app { position: relative; z-index: 1; }
-
-/* Header */
-header {
-display: flex;
-align-items: center;
-justify-content: space-between;
-padding: 16px 28px;
-border-bottom: 1px solid var(–border);
-background: rgba(15,21,32,0.8);
-backdrop-filter: blur(10px);
-position: sticky;
-top: 0;
-z-index: 100;
-}
-
-.logo {
-display: flex;
-align-items: center;
-gap: 12px;
-}
-
-.logo-mark {
-width: 28px; height: 28px;
-border: 2px solid var(–accent-blue);
-position: relative;
-display: flex; align-items: center; justify-content: center;
-}
-
-.logo-mark::before {
-content: ‘’;
-width: 10px; height: 10px;
-background: var(–accent-blue);
-animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-0%, 100% { opacity: 1; transform: scale(1); }
-50% { opacity: 0.5; transform: scale(0.8); }
-}
-
-.logo-text {
-font-size: 13px;
-font-weight: 600;
-letter-spacing: 0.15em;
-color: var(–text-bright);
-text-transform: uppercase;
-}
-
-.logo-sub {
-font-size: 10px;
-color: var(–text-dim);
-letter-spacing: 0.1em;
-}
-
-.header-right {
-display: flex;
-align-items: center;
-gap: 20px;
-}
-
-.status-indicator {
-display: flex;
-align-items: center;
-gap: 8px;
-font-size: 11px;
-color: var(–text-dim);
-}
-
-.status-dot {
-width: 7px; height: 7px;
-border-radius: 50%;
-background: var(–accent-green);
-animation: blink 2s infinite;
-}
-
-@keyframes blink {
-0%, 100% { opacity: 1; }
-50% { opacity: 0.3; }
-}
-
-.last-updated {
-font-size: 11px;
-color: var(–text-dim);
-}
-
-.refresh-btn {
-background: transparent;
-border: 1px solid var(–border);
-color: var(–accent-blue);
-font-family: var(–mono);
-font-size: 11px;
-padding: 6px 14px;
-cursor: pointer;
-letter-spacing: 0.1em;
-transition: all 0.2s;
-}
-
-.refresh-btn:hover {
-background: rgba(68,136,255,0.1);
-border-color: var(–accent-blue);
-}
-
-/* Tabs */
-.tabs {
-display: flex;
-gap: 0;
-padding: 0 28px;
-border-bottom: 1px solid var(–border);
-background: var(–surface);
-}
-
-.tab {
-padding: 14px 24px;
-font-family: var(–mono);
-font-size: 12px;
-font-weight: 500;
-letter-spacing: 0.1em;
-color: var(–text-dim);
-cursor: pointer;
-border-bottom: 2px solid transparent;
-transition: all 0.2s;
-text-transform: uppercase;
-}
-
-.tab.active {
-color: var(–accent-blue);
-border-bottom-color: var(–accent-blue);
-}
-
-.tab:hover:not(.active) {
-color: var(–text);
-}
-
-/* Main content */
-.content { padding: 24px 28px; }
-
-.tab-panel { display: none; }
-.tab-panel.active { display: block; }
-
-/* ===== DASHBOARD TAB ===== */
-.section-label {
-font-size: 10px;
-letter-spacing: 0.2em;
-color: var(–text-dim);
-text-transform: uppercase;
-margin-bottom: 14px;
-display: flex;
-align-items: center;
-gap: 10px;
-}
-
-.section-label::after {
-content: ‘’;
-flex: 1;
-height: 1px;
-background: var(–border);
-}
-
-.market-grid {
-display: grid;
-grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-gap: 14px;
-margin-bottom: 32px;
-}
-
-.market-card {
-background: var(–surface);
-border: 1px solid var(–border);
-padding: 18px 20px;
-position: relative;
-overflow: hidden;
-transition: border-color 0.2s;
-cursor: pointer;
-}
-
-.market-card:hover {
-border-color: rgba(68,136,255,0.4);
-}
-
-.market-card::before {
-content: ‘’;
-position: absolute;
-top: 0; left: 0; right: 0;
-height: 2px;
-background: var(–card-color, var(–accent-blue));
-}
-
-.card-header {
-display: flex;
-justify-content: space-between;
-align-items: flex-start;
-margin-bottom: 12px;
-}
-
-.card-ticker {
-font-size: 11px;
-font-weight: 600;
-letter-spacing: 0.15em;
-color: var(–text-dim);
-text-transform: uppercase;
-}
-
-.card-market {
-font-size: 9px;
-color: var(–text-dim);
-background: var(–surface2);
-padding: 2px 6px;
-letter-spacing: 0.1em;
-}
-
-.card-price {
-font-size: 26px;
-font-weight: 300;
-color: var(–text-bright);
-letter-spacing: -0.02em;
-margin-bottom: 6px;
-font-variant-numeric: tabular-nums;
-}
-
-.card-unit {
-font-size: 11px;
-color: var(–text-dim);
-}
-
-.card-change {
-display: flex;
-align-items: center;
-gap: 6px;
-font-size: 12px;
-font-weight: 500;
-}
-
-.card-change.up { color: var(–accent-green); }
-.card-change.down { color: var(–accent-red); }
-
-.card-name {
-font-family: var(–sans);
-font-size: 11px;
-color: var(–text-dim);
-margin-top: 10px;
-}
-
-.sparkline-container {
-margin-top: 12px;
-height: 36px;
-}
-
-.sparkline-container canvas {
-width: 100% !important;
-}
-
-/* Chart section */
-.chart-section {
-display: grid;
-grid-template-columns: 1fr 1fr;
-gap: 16px;
-margin-bottom: 32px;
-}
-
-.chart-card {
-background: var(–surface);
-border: 1px solid var(–border);
-padding: 20px;
-}
-
-.chart-title {
-font-size: 11px;
-font-weight: 500;
-letter-spacing: 0.12em;
-color: var(–text-dim);
-text-transform: uppercase;
-margin-bottom: 16px;
-display: flex;
-justify-content: space-between;
-align-items: center;
-}
-
-.chart-controls {
-display: flex;
-gap: 6px;
-}
-
-.range-btn {
-background: transparent;
-border: 1px solid var(–border);
-color: var(–text-dim);
-font-family: var(–mono);
-font-size: 10px;
-padding: 3px 8px;
-cursor: pointer;
-letter-spacing: 0.08em;
-transition: all 0.15s;
-}
-
-.range-btn.active, .range-btn:hover {
-background: rgba(68,136,255,0.15);
-border-color: var(–accent-blue);
-color: var(–accent-blue);
-}
-
-.chart-canvas-wrap {
-height: 280px;
-position: relative;
-}
-
-/* Alerts section */
-.alerts-section { margin-bottom: 32px; }
-
-.alert-form {
-display: flex;
-gap: 10px;
-margin-bottom: 16px;
-flex-wrap: wrap;
-}
-
-.alert-select, .alert-input {
-background: var(–surface2);
-border: 1px solid var(–border);
-color: var(–text);
-font-family: var(–mono);
-font-size: 12px;
-padding: 8px 12px;
-outline: none;
-transition: border-color 0.2s;
-}
-
-.alert-select:focus, .alert-input:focus {
-border-color: var(–accent-blue);
-}
-
-.alert-input { width: 110px; }
-.alert-select { min-width: 140px; }
-
-.add-alert-btn {
-background: rgba(68,136,255,0.15);
-border: 1px solid var(–accent-blue);
-color: var(–accent-blue);
-font-family: var(–mono);
-font-size: 11px;
-padding: 8px 16px;
-cursor: pointer;
-letter-spacing: 0.1em;
-transition: all 0.2s;
-}
-
-.add-alert-btn:hover {
-background: rgba(68,136,255,0.3);
-}
-
-.alerts-list { display: flex; flex-direction: column; gap: 8px; }
-
-.alert-item {
-display: flex;
-align-items: center;
-gap: 14px;
-background: var(–surface2);
-border: 1px solid var(–border);
-padding: 10px 16px;
-font-size: 12px;
-animation: slideIn 0.3s ease;
-}
-
-@keyframes slideIn {
-from { opacity: 0; transform: translateX(-10px); }
-to { opacity: 1; transform: translateX(0); }
-}
-
-.alert-badge {
-font-size: 9px;
-font-weight: 600;
-letter-spacing: 0.1em;
-padding: 2px 7px;
-border: 1px solid;
-}
-
-.alert-badge.above {
-color: var(–accent-green);
-border-color: var(–accent-green);
-background: rgba(0,255,136,0.08);
-}
-
-.alert-badge.below {
-color: var(–accent-red);
-border-color: var(–accent-red);
-background: rgba(255,68,102,0.08);
-}
-
-.alert-triggered {
-color: var(–accent-yellow);
-font-size: 10px;
-letter-spacing: 0.1em;
-margin-left: auto;
-}
-
-.alert-delete {
-background: transparent;
-border: none;
-color: var(–text-dim);
-cursor: pointer;
-font-size: 14px;
-padding: 0 4px;
-transition: color 0.2s;
-}
-
-.alert-delete:hover { color: var(–accent-red); }
-
-/* ===== CORRELATION TAB ===== */
-.corr-controls {
-display: flex;
-gap: 12px;
-margin-bottom: 24px;
-flex-wrap: wrap;
-align-items: center;
-}
-
-.corr-label {
-font-size: 11px;
-color: var(–text-dim);
-letter-spacing: 0.1em;
-}
-
-.corr-select {
-background: var(–surface2);
-border: 1px solid var(–border);
-color: var(–text);
-font-family: var(–mono);
-font-size: 12px;
-padding: 8px 12px;
-outline: none;
-}
-
-.corr-grid {
-display: grid;
-grid-template-columns: 1fr;
-gap: 20px;
-}
-
-.corr-top-row {
-display: grid;
-grid-template-columns: 1fr 1fr;
-gap: 20px;
-}
-
-.corr-matrix-wrap {
-background: var(–surface);
-border: 1px solid var(–border);
-padding: 20px;
-}
-
-.matrix-title {
-font-size: 11px;
-letter-spacing: 0.12em;
-color: var(–text-dim);
-text-transform: uppercase;
-margin-bottom: 16px;
-}
-
-.matrix-table {
-width: 100%;
-border-collapse: collapse;
-font-size: 11px;
-}
-
-.matrix-table th {
-font-weight: 500;
-font-size: 9px;
-letter-spacing: 0.1em;
-color: var(–text-dim);
-padding: 8px 10px;
-text-align: center;
-border-bottom: 1px solid var(–border);
-}
-
-.matrix-table td {
-padding: 8px 10px;
-text-align: center;
-font-variant-numeric: tabular-nums;
-border-bottom: 1px solid rgba(30,45,69,0.5);
-transition: filter 0.2s;
-}
-
-.matrix-table td:first-child {
-font-size: 9px;
-letter-spacing: 0.1em;
-color: var(–text-dim);
-text-align: left;
-font-weight: 500;
-}
-
-.scatter-wrap {
-background: var(–surface);
-border: 1px solid var(–border);
-padding: 20px;
-}
-
-.scatter-controls {
-display: flex;
-gap: 10px;
-margin-bottom: 14px;
-align-items: center;
-font-size: 11px;
-color: var(–text-dim);
-flex-wrap: wrap;
-}
-
-.scatter-select {
-background: var(–surface2);
-border: 1px solid var(–border);
-color: var(–text);
-font-family: var(–mono);
-font-size: 11px;
-padding: 5px 10px;
-outline: none;
-}
-
-.scatter-canvas-wrap {
-height: 400px;
-position: relative;
-}
-
-/* Rolling corr */
-.rolling-wrap {
-background: var(–surface);
-border: 1px solid var(–border);
-padding: 20px;
-}
-
-.rolling-canvas-wrap {
-height: 160px;
-position: relative;
-}
-
-/* Notification */
-.notification {
-position: fixed;
-top: 70px;
-right: 28px;
-background: var(–surface2);
-border: 1px solid var(–accent-yellow);
-color: var(–accent-yellow);
-font-family: var(–mono);
-font-size: 12px;
-padding: 12px 20px;
-z-index: 1000;
-animation: notifIn 0.3s ease, notifOut 0.3s ease 3s forwards;
-max-width: 320px;
-}
-
-@keyframes notifIn {
-from { opacity: 0; transform: translateX(20px); }
-to { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes notifOut {
-from { opacity: 1; }
-to { opacity: 0; }
-}
-
-/* Loading overlay */
-.loading {
-display: flex;
-align-items: center;
-gap: 10px;
-font-size: 12px;
-color: var(–text-dim);
-padding: 40px 0;
-}
-
-.spinner {
-width: 16px; height: 16px;
-border: 2px solid var(–border);
-border-top-color: var(–accent-blue);
-border-radius: 50%;
-animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* Import bar */
-.import-bar {
-display: flex;
-gap: 20px;
-flex-wrap: wrap;
-align-items: center;
-background: var(–surface);
-border: 1px solid var(–border);
-padding: 14px 18px;
-margin-bottom: 24px;
-}
-
-.import-group {
-display: flex;
-align-items: center;
-gap: 10px;
-}
-
-.import-label {
-font-size: 10px;
-letter-spacing: 0.15em;
-color: var(–text-dim);
-text-transform: uppercase;
-min-width: 50px;
-}
-
-.file-btn {
-background: transparent;
-border: 1px solid var(–border);
-color: var(–text-dim);
-font-family: var(–mono);
-font-size: 10px;
-padding: 5px 12px;
-cursor: pointer;
-letter-spacing: 0.1em;
-transition: all 0.2s;
-}
-
-.file-btn:hover {
-border-color: var(–accent-blue);
-color: var(–accent-blue);
-}
-
-.import-status {
-font-size: 10px;
-color: var(–text-dim);
-}
-
-.import-status.loaded {
-color: var(–accent-green);
-}
-
-.import-hint {
-font-size: 10px;
-color: var(–text-dim);
-margin-left: auto;
-opacity: 0.6;
-}
-
-/* Source tab */
-.source-grid {
-display: grid;
-grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-gap: 16px;
-margin-bottom: 8px;
-}
-
-.source-card {
-background: var(–surface);
-border: 1px solid var(–border);
-border-top: 2px solid var(–src-color, var(–accent-blue));
-padding: 20px;
-display: flex;
-flex-direction: column;
-gap: 8px;
-}
-
-.source-header {
-display: flex;
-justify-content: space-between;
-align-items: center;
-margin-bottom: 2px;
-}
-
-.source-name {
-font-size: 13px;
-font-weight: 600;
-color: var(–text-bright);
-letter-spacing: 0.02em;
-}
-
-.source-badge {
-font-size: 9px;
-font-weight: 600;
-letter-spacing: 0.12em;
-padding: 2px 8px;
-border: 1px solid;
-}
-
-.source-badge.live {
-color: var(–accent-green);
-border-color: var(–accent-green);
-background: rgba(0,255,136,0.08);
-}
-
-.source-badge.est {
-color: var(–accent-yellow);
-border-color: var(–accent-yellow);
-background: rgba(255,204,0,0.08);
-}
-
-.source-ticker {
-font-size: 11px;
-color: var(–src-color, var(–accent-blue));
-letter-spacing: 0.1em;
-margin-bottom: 4px;
-}
-
-.source-meta-row {
-display: flex;
-gap: 12px;
-font-size: 11px;
-color: var(–text);
-}
-
-.source-key {
-color: var(–text-dim);
-min-width: 56px;
-flex-shrink: 0;
-}
-
-.source-urls {
-margin-top: 8px;
-display: flex;
-flex-direction: column;
-gap: 5px;
-}
-
-.source-url-label {
-font-size: 9px;
-letter-spacing: 0.15em;
-color: var(–text-dim);
-text-transform: uppercase;
-margin-bottom: 3px;
-}
-
-.source-url {
-font-size: 10px;
-color: var(–accent-blue);
-text-decoration: none;
-word-break: break-all;
-opacity: 0.85;
-transition: opacity 0.15s;
-}
-
-.source-url:hover { opacity: 1; text-decoration: underline; }
-
-.source-note {
-margin-top: 6px;
-font-family: var(–sans);
-font-size: 11px;
-color: var(–text-dim);
-line-height: 1.6;
-border-top: 1px solid var(–border);
-padding-top: 8px;
-}
-
-.source-import-wrap {
-display: flex;
-flex-direction: column;
-gap: 16px;
-}
-
-.source-import-wrap .import-bar {
-margin-bottom: 0;
-}
-
-.csv-format-note {
-background: var(–surface);
-border: 1px solid var(–border);
-padding: 16px 20px;
-}
-
-.csv-example {
-display: block;
-font-family: var(–mono);
-font-size: 11px;
-color: var(–accent-green);
-margin-top: 8px;
-line-height: 1.8;
-opacity: 0.85;
-}
-
-@media (max-width: 768px) {
-.chart-section, .corr-grid { grid-template-columns: 1fr; }
-.market-grid { grid-template-columns: repeat(2, 1fr); }
-header { flex-wrap: wrap; gap: 12px; }
-}
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(68,136,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(68,136,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app { position: relative; z-index: 1; }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 28px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(15,21,32,0.9);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo { display: flex; align-items: center; gap: 12px; }
+  .logo-mark {
+    width: 28px; height: 28px;
+    border: 2px solid var(--accent-blue);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .logo-mark::before {
+    content: '';
+    width: 10px; height: 10px;
+    background: var(--accent-blue);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
+  .logo-text { font-size:13px; font-weight:600; letter-spacing:.15em; color:var(--text-bright); text-transform:uppercase; }
+  .logo-sub  { font-size:10px; color:var(--text-dim); letter-spacing:.1em; }
+
+  .header-right { display:flex; align-items:center; gap:20px; }
+  .last-updated { font-size:11px; color:var(--text-dim); }
+
+  .tabs {
+    display:flex; padding:0 28px;
+    border-bottom:1px solid var(--border);
+    background:var(--surface);
+  }
+  .tab {
+    padding:14px 24px; font-family:var(--mono); font-size:12px; font-weight:500;
+    letter-spacing:.1em; color:var(--text-dim); cursor:pointer;
+    border-bottom:2px solid transparent; transition:all .2s; text-transform:uppercase;
+  }
+  .tab.active { color:var(--accent-blue); border-bottom-color:var(--accent-blue); }
+  .tab:hover:not(.active) { color:var(--text); }
+
+  .content { padding:24px 28px; }
+  .tab-panel { display:none; }
+  .tab-panel.active { display:block; }
+
+  .section-label {
+    font-size:10px; letter-spacing:.2em; color:var(--text-dim);
+    text-transform:uppercase; margin-bottom:14px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .section-label::after { content:''; flex:1; height:1px; background:var(--border); }
+
+  /* ===== MARKET CARDS ===== */
+  .market-grid {
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+    gap:14px; margin-bottom:32px;
+  }
+  .market-card {
+    background:var(--surface); border:1px solid var(--border);
+    padding:18px 20px; position:relative; overflow:hidden;
+    transition:border-color .2s; cursor:pointer;
+  }
+  .market-card:hover { border-color:rgba(68,136,255,.4); }
+  .market-card::before {
+    content:''; position:absolute; top:0; left:0; right:0;
+    height:2px; background:var(--card-color,var(--accent-blue));
+  }
+  .card-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; }
+  .card-ticker { font-size:11px; font-weight:600; letter-spacing:.15em; color:var(--text-dim); text-transform:uppercase; }
+  .card-market { font-size:9px; color:var(--text-dim); background:var(--surface2); padding:2px 6px; letter-spacing:.1em; }
+  .card-price { font-size:26px; font-weight:300; color:var(--text-bright); letter-spacing:-.02em; margin-bottom:6px; font-variant-numeric:tabular-nums; }
+  .card-unit { font-size:11px; color:var(--text-dim); }
+  .card-change { display:flex; align-items:center; gap:6px; font-size:12px; font-weight:500; }
+  .card-change.up { color:var(--accent-green); }
+  .card-change.down { color:var(--accent-red); }
+  .card-name { font-family:var(--sans); font-size:11px; color:var(--text-dim); margin-top:10px; }
+  .sparkline-container { margin-top:12px; height:36px; }
+  .sparkline-container canvas { width:100% !important; }
+
+  /* ===== CHARTS ===== */
+  .chart-section { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:32px; }
+  .chart-card { background:var(--surface); border:1px solid var(--border); padding:20px; }
+  .chart-title {
+    font-size:11px; font-weight:500; letter-spacing:.12em; color:var(--text-dim);
+    text-transform:uppercase; margin-bottom:16px;
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;
+  }
+  .chart-controls { display:flex; gap:6px; flex-wrap:wrap; }
+  .range-btn {
+    background:transparent; border:1px solid var(--border);
+    color:var(--text-dim); font-family:var(--mono); font-size:10px;
+    padding:3px 8px; cursor:pointer; letter-spacing:.08em; transition:all .15s;
+  }
+  .range-btn.active, .range-btn:hover { background:rgba(68,136,255,.15); border-color:var(--accent-blue); color:var(--accent-blue); }
+  .chart-canvas-wrap { height:280px; position:relative; }
+
+  /* ===== ALERTS ===== */
+  .alert-form { display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap; }
+  .alert-select, .alert-input {
+    background:var(--surface2); border:1px solid var(--border);
+    color:var(--text); font-family:var(--mono); font-size:12px;
+    padding:8px 12px; outline:none; transition:border-color .2s;
+  }
+  .alert-select:focus,.alert-input:focus { border-color:var(--accent-blue); }
+  .alert-input { width:110px; }
+  .alert-select { min-width:140px; }
+  .add-alert-btn {
+    background:rgba(68,136,255,.15); border:1px solid var(--accent-blue);
+    color:var(--accent-blue); font-family:var(--mono); font-size:11px;
+    padding:8px 16px; cursor:pointer; letter-spacing:.1em; transition:all .2s;
+  }
+  .add-alert-btn:hover { background:rgba(68,136,255,.3); }
+  .alerts-list { display:flex; flex-direction:column; gap:8px; }
+  .alert-item {
+    display:flex; align-items:center; gap:14px;
+    background:var(--surface2); border:1px solid var(--border);
+    padding:10px 16px; font-size:12px;
+    animation:slideIn .3s ease;
+  }
+  @keyframes slideIn { from{opacity:0;transform:translateX(-10px)} to{opacity:1;transform:translateX(0)} }
+  .alert-badge { font-size:9px; font-weight:600; letter-spacing:.1em; padding:2px 7px; border:1px solid; }
+  .alert-badge.above { color:var(--accent-green); border-color:var(--accent-green); background:rgba(0,255,136,.08); }
+  .alert-badge.below { color:var(--accent-red); border-color:var(--accent-red); background:rgba(255,68,102,.08); }
+  .alert-triggered { color:var(--accent-yellow); font-size:10px; letter-spacing:.1em; margin-left:auto; }
+  .alert-delete { background:transparent; border:none; color:var(--text-dim); cursor:pointer; font-size:14px; padding:0 4px; transition:color .2s; }
+  .alert-delete:hover { color:var(--accent-red); }
+
+  /* ===== CORRELATION ===== */
+  .corr-controls { display:flex; gap:12px; margin-bottom:24px; flex-wrap:wrap; align-items:center; }
+  .corr-label { font-size:11px; color:var(--text-dim); letter-spacing:.1em; }
+  .corr-select {
+    background:var(--surface2); border:1px solid var(--border);
+    color:var(--text); font-family:var(--mono); font-size:12px;
+    padding:8px 12px; outline:none;
+  }
+  .corr-grid { display:grid; grid-template-columns:1fr; gap:20px; }
+  .corr-top-row { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  .corr-matrix-wrap { background:var(--surface); border:1px solid var(--border); padding:20px; }
+  .matrix-title { font-size:11px; letter-spacing:.12em; color:var(--text-dim); text-transform:uppercase; margin-bottom:16px; }
+  .matrix-table { width:100%; border-collapse:collapse; font-size:11px; }
+  .matrix-table th { font-weight:500; font-size:9px; letter-spacing:.1em; color:var(--text-dim); padding:8px 10px; text-align:center; border-bottom:1px solid var(--border); }
+  .matrix-table td { padding:8px 10px; text-align:center; font-variant-numeric:tabular-nums; border-bottom:1px solid rgba(30,45,69,.5); }
+  .matrix-table td:first-child { font-size:9px; letter-spacing:.1em; color:var(--text-dim); text-align:left; font-weight:500; }
+  .scatter-wrap { background:var(--surface); border:1px solid var(--border); padding:20px; }
+  .scatter-controls { display:flex; gap:10px; margin-bottom:14px; align-items:center; font-size:11px; color:var(--text-dim); flex-wrap:wrap; }
+  .scatter-select { background:var(--surface2); border:1px solid var(--border); color:var(--text); font-family:var(--mono); font-size:11px; padding:5px 10px; outline:none; }
+  .scatter-canvas-wrap { height:400px; position:relative; }
+  .rolling-wrap { background:var(--surface); border:1px solid var(--border); padding:20px; }
+  .rolling-canvas-wrap { height:160px; position:relative; }
+
+  /* ===== SOURCE TAB ===== */
+  .source-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:16px; margin-bottom:8px; }
+  .source-card { background:var(--surface); border:1px solid var(--border); border-top:2px solid var(--src-color,var(--accent-blue)); padding:20px; display:flex; flex-direction:column; gap:8px; }
+  .source-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:2px; }
+  .source-name { font-size:13px; font-weight:600; color:var(--text-bright); }
+  .source-badge { font-size:9px; font-weight:600; letter-spacing:.12em; padding:2px 8px; border:1px solid; }
+  .source-badge.live { color:var(--accent-green); border-color:var(--accent-green); background:rgba(0,255,136,.08); }
+  .source-badge.est  { color:var(--accent-yellow); border-color:var(--accent-yellow); background:rgba(255,204,0,.08); }
+  .source-ticker { font-size:11px; color:var(--src-color,var(--accent-blue)); letter-spacing:.1em; margin-bottom:4px; }
+  .source-meta-row { display:flex; gap:12px; font-size:11px; color:var(--text); }
+  .source-key { color:var(--text-dim); min-width:56px; flex-shrink:0; }
+  .source-urls { margin-top:8px; display:flex; flex-direction:column; gap:5px; }
+  .source-url-label { font-size:9px; letter-spacing:.15em; color:var(--text-dim); text-transform:uppercase; margin-bottom:3px; }
+  .source-url { font-size:10px; color:var(--accent-blue); text-decoration:none; word-break:break-all; opacity:.85; transition:opacity .15s; }
+  .source-url:hover { opacity:1; text-decoration:underline; }
+  .source-note { margin-top:6px; font-family:var(--sans); font-size:11px; color:var(--text-dim); line-height:1.6; border-top:1px solid var(--border); padding-top:8px; }
+  .source-import-wrap { display:flex; flex-direction:column; gap:16px; }
+  .source-import-wrap .import-bar { margin-bottom:0; }
+  .csv-format-note { background:var(--surface); border:1px solid var(--border); padding:16px 20px; }
+  .csv-example { display:block; font-family:var(--mono); font-size:11px; color:var(--accent-green); margin-top:8px; line-height:1.8; opacity:.85; }
+
+  /* ===== IMPORT BAR ===== */
+  .import-bar { display:flex; gap:20px; flex-wrap:wrap; align-items:center; background:var(--surface); border:1px solid var(--border); padding:14px 18px; margin-bottom:24px; }
+  .import-group { display:flex; align-items:center; gap:10px; }
+  .import-label { font-size:10px; letter-spacing:.15em; color:var(--text-dim); text-transform:uppercase; min-width:50px; }
+  .file-btn { background:transparent; border:1px solid var(--border); color:var(--text-dim); font-family:var(--mono); font-size:10px; padding:5px 12px; cursor:pointer; letter-spacing:.1em; transition:all .2s; }
+  .file-btn:hover { border-color:var(--accent-blue); color:var(--accent-blue); }
+  .import-status { font-size:10px; color:var(--text-dim); }
+  .import-status.loaded { color:var(--accent-green); }
+
+  /* ===== RELATIVE CHART ===== */
+  .base-date-input { background:var(--surface2); border:1px solid var(--border); color:var(--text); font-family:var(--mono); font-size:12px; padding:6px 10px; outline:none; transition:border-color .2s; color-scheme:dark; }
+  .base-date-input:focus { border-color:var(--accent-blue); }
+
+  /* ===== NOTIFICATION ===== */
+  .notification {
+    position:fixed; top:70px; right:28px;
+    background:var(--surface2); border:1px solid var(--accent-yellow);
+    color:var(--accent-yellow); font-family:var(--mono); font-size:12px;
+    padding:12px 20px; z-index:1000;
+    animation:notifIn .3s ease, notifOut .3s ease 3s forwards;
+    max-width:320px;
+  }
+  @keyframes notifIn  { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:translateX(0)} }
+  @keyframes notifOut { from{opacity:1} to{opacity:0} }
+
+  /* ===== MONTHLY TAB ===== */
+  .monthly-kpi-row {
+    display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:28px;
+  }
+  .monthly-kpi {
+    background:var(--surface); border:1px solid var(--border);
+    padding:16px 18px; position:relative;
+  }
+  .monthly-kpi::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:var(--kpi-color,var(--accent-blue)); }
+  .mkpi-label { font-size:10px; letter-spacing:.15em; color:var(--text-dim); text-transform:uppercase; margin-bottom:8px; }
+  .mkpi-value { font-family:var(--mono); font-size:24px; font-weight:300; color:var(--text-bright); line-height:1; }
+  .mkpi-sub   { font-size:10px; color:var(--text-dim); margin-top:5px; }
+  .mkpi-chg   { font-size:11px; margin-top:4px; }
+  .mkpi-chg.up   { color:var(--accent-green); }
+  .mkpi-chg.down { color:var(--accent-red); }
+
+  .monthly-charts-grid { display:grid; grid-template-columns:1fr; gap:16px; margin-bottom:16px; }
+  .monthly-chart-card { background:var(--surface); border:1px solid var(--border); padding:20px; }
+  .monthly-chart-wide { }
+  .monthly-two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+
+  .monthly-status-bar {
+    display:flex; align-items:center; gap:10px;
+    font-size:10px; color:var(--text-dim);
+    border:1px solid var(--border); background:var(--surface);
+    padding:9px 14px; margin-bottom:24px;
+  }
+  .m-status-dot { width:6px; height:6px; border-radius:50%; background:var(--text-dim); transition:background .3s; }
+  .m-status-dot.ok      { background:var(--accent-green); box-shadow:0 0 6px var(--accent-green); }
+  .m-status-dot.loading { background:var(--accent-yellow); animation:blink 1s infinite; }
+  .m-status-dot.error   { background:var(--accent-red); }
+
+  .monthly-controls {
+    display:flex; align-items:center; gap:12px; margin-bottom:20px; flex-wrap:wrap;
+  }
+
+  /* Corr matrix monthly */
+  .m-corr-matrix {
+    display:grid; font-size:11px;
+  }
+  .m-corr-cell-hdr {
+    font-size:9px; color:var(--text-dim); text-align:center;
+    padding:6px 4px; letter-spacing:.08em;
+  }
+  .m-corr-row-lbl {
+    font-size:9px; color:var(--text-dim); display:flex;
+    align-items:center; padding:0 8px 0 0; letter-spacing:.08em;
+  }
+  .m-corr-val {
+    text-align:center; padding:9px 4px;
+    font-family:var(--mono); font-weight:600; font-size:13px;
+  }
+
+  .monthly-legend { display:flex; gap:20px; flex-wrap:wrap; margin-bottom:16px; }
+  .m-legend-item  { display:flex; align-items:center; gap:6px; font-size:11px; color:var(--text-dim); }
+  .m-legend-dot   { width:8px; height:8px; border-radius:50%; }
+
+  .loading { display:flex; align-items:center; gap:10px; font-size:12px; color:var(--text-dim); padding:40px 0; }
+  .spinner { width:16px; height:16px; border:2px solid var(--border); border-top-color:var(--accent-blue); border-radius:50%; animation:spin .8s linear infinite; }
+  @keyframes spin { to{transform:rotate(360deg)} }
+
+  /* Data note */
+  .data-note { font-size:10px; color:var(--text-dim); border-top:1px solid var(--border); padding-top:14px; line-height:1.9; }
+  .data-note a { color:var(--accent-blue); text-decoration:none; }
+
+  select, input[type="date"] {
+    background:var(--surface2); border:1px solid var(--border);
+    color:var(--text); font-family:var(--mono); font-size:11px;
+    padding:6px 10px; cursor:pointer; outline:none;
+  }
+  select:focus, input:focus { border-color:var(--accent-blue); }
+
+  @media(max-width:900px) {
+    .chart-section,.corr-top-row,.monthly-two-col { grid-template-columns:1fr; }
+    .market-grid { grid-template-columns:repeat(2,1fr); }
+    .monthly-kpi-row { grid-template-columns:repeat(2,1fr); }
+    header { flex-wrap:wrap; gap:12px; }
+  }
 </style>
-
 </head>
 <body>
 <div class="app">
+
+  <!-- HEADER -->
   <header>
     <div class="logo">
       <div class="logo-mark"></div>
@@ -838,1211 +341,1236 @@ header { flex-wrap: wrap; gap: 12px; }
       </div>
     </div>
     <div class="header-right">
-      <div class="status-indicator">
-        <div class="status-dot"></div>
-        <span>LIVE</span>
-      </div>
-      <span class="last-updated" id="lastUpdated">--:--:--</span>
-      <button class="refresh-btn" onclick="refreshData()">⟳ REFRESH</button>
+      <span class="last-updated" id="lastUpdated">CSV未読込</span>
     </div>
   </header>
 
+  <!-- TABS -->
   <div class="tabs">
-    <div class="tab active" onclick="switchTab('dashboard', this)">DASHBOARD</div>
-    <div class="tab" onclick="switchTab('correlation', this)">CORRELATION</div>
-    <div class="tab" onclick="switchTab('alerts', this)">ALERTS <span id="alertBadge"></span></div>
-    <div class="tab" onclick="switchTab('source', this)">SOURCES</div>
+    <div class="tab active"  onclick="switchTab('daily',       this)">DAILY</div>
+    <div class="tab"         onclick="switchTab('monthly',     this)">MONTHLY</div>
+    <div class="tab"         onclick="switchTab('correlation', this)">CORRELATION</div>
+    <div class="tab"         onclick="switchTab('alerts',      this)">ALERTS <span id="alertBadge"></span></div>
+    <div class="tab"         onclick="switchTab('source',      this)">SOURCES</div>
   </div>
 
   <div class="content">
 
-```
-<!-- DASHBOARD TAB -->
-<div class="tab-panel active" id="tab-dashboard">
-  <div class="section-label">Spot &amp; Near-Month Prices</div>
-  <div class="market-grid" id="marketGrid">
-    <div class="loading"><div class="spinner"></div> Loading market data...</div>
-  </div>
+    <!-- ══════════════════════════════════════════════
+         DAILY TAB  (旧 DASHBOARD)
+    ══════════════════════════════════════════════ -->
+    <div class="tab-panel active" id="tab-daily">
 
-  <div class="section-label">Price History</div>
-  <div class="chart-section">
-    <div class="chart-card" id="gasCard">
-      <div class="chart-title">
-        Gas &amp; LNG
-        <div class="chart-controls" id="gasRangeControls">
-          <button class="range-btn active" onclick="setRange(7,   this)">1W</button>
-          <button class="range-btn"        onclick="setRange(30,  this)">1M</button>
-          <button class="range-btn"        onclick="setRange(90,  this)">3M</button>
-          <button class="range-btn"        onclick="setRange(180, this)">6M</button>
-          <button class="range-btn"        onclick="setRange(365, this)">1Y</button>
-          <button class="range-btn"        onclick="setRange(365*3, this)">3Y</button>
-          <button class="range-btn"        onclick="setRange(365*5, this)">5Y</button>
+      <div class="section-label">Spot &amp; Near-Month Prices</div>
+      <div class="market-grid" id="marketGrid">
+        <div class="loading"><div class="spinner"></div> Loading market data...</div>
+      </div>
+
+      <div class="section-label">Price History</div>
+      <div class="chart-section">
+        <div class="chart-card" id="gasCard">
+          <div class="chart-title">
+            Gas &amp; LNG
+            <div class="chart-controls" id="gasRangeControls">
+              <button class="range-btn active" onclick="setRange(7,   this)">1W</button>
+              <button class="range-btn"        onclick="setRange(30,  this)">1M</button>
+              <button class="range-btn"        onclick="setRange(90,  this)">3M</button>
+              <button class="range-btn"        onclick="setRange(180, this)">6M</button>
+              <button class="range-btn"        onclick="setRange(365, this)">1Y</button>
+              <button class="range-btn"        onclick="setRange(1095,this)">3Y</button>
+              <button class="range-btn"        onclick="setRange(1825,this)">5Y</button>
+            </div>
+          </div>
+          <div class="chart-canvas-wrap"><canvas id="gasChart"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">
+            Power Markets
+            <div class="chart-controls" id="powerRangeControls">
+              <select class="range-btn" id="jepxAreaSelect" style="padding:3px 6px;font-size:10px" onchange="changeJEPXArea(this.value)">
+                <option value="tokyo" selected>東京</option>
+                <option value="kansai">関西</option>
+                <option value="tohoku">東北</option>
+                <option value="kyushu">九州</option>
+                <option value="chubu">中部</option>
+                <option value="hokkaido">北海道</option>
+                <option value="hokuriku">北陸</option>
+                <option value="chugoku">中国</option>
+                <option value="shikoku">四国</option>
+                <option value="system">システムP</option>
+              </select>
+              <button class="range-btn active" onclick="setRange2(7,   this)">1W</button>
+              <button class="range-btn"        onclick="setRange2(30,  this)">1M</button>
+              <button class="range-btn"        onclick="setRange2(90,  this)">3M</button>
+              <button class="range-btn"        onclick="setRange2(180, this)">6M</button>
+              <button class="range-btn"        onclick="setRange2(365, this)">1Y</button>
+              <button class="range-btn"        onclick="setRange2(1095,this)">3Y</button>
+              <button class="range-btn"        onclick="setRange2(1825,this)">5Y</button>
+            </div>
+          </div>
+          <div class="chart-canvas-wrap"><canvas id="powerChart"></canvas></div>
         </div>
       </div>
-      <div class="chart-canvas-wrap"><canvas id="gasChart"></canvas></div>
-    </div>
-    <div class="chart-card" id="powerCard">
-      <div class="chart-title">
-        Power Markets
-        <div class="chart-controls" id="powerRangeControls">
-          <select class="range-btn" id="jepxAreaSelect" style="padding:3px 6px;font-size:10px" onchange="changeJEPXArea(this.value)">
-            <option value="tokyo" selected>東京</option>
-            <option value="kansai">関西</option>
-            <option value="tohoku">東北</option>
-            <option value="kyushu">九州</option>
-            <option value="chubu">中部</option>
-            <option value="hokkaido">北海道</option>
-            <option value="hokuriku">北陸</option>
-            <option value="chugoku">中国</option>
-            <option value="shikoku">四国</option>
-            <option value="system">システムP</option>
-          </select>
-          <button class="range-btn active" onclick="setRange2(7,   this)">1W</button>
-          <button class="range-btn"        onclick="setRange2(30,  this)">1M</button>
-          <button class="range-btn"        onclick="setRange2(90,  this)">3M</button>
-          <button class="range-btn"        onclick="setRange2(180, this)">6M</button>
-          <button class="range-btn"        onclick="setRange2(365, this)">1Y</button>
-          <button class="range-btn"        onclick="setRange2(365*3, this)">3Y</button>
-          <button class="range-btn"        onclick="setRange2(365*5, this)">5Y</button>
+
+      <div class="section-label">相対推移 (Indexed)</div>
+      <div class="chart-section">
+        <div class="chart-card">
+          <div class="chart-title">Gas &amp; LNG — Indexed</div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;">
+            <span class="corr-label" style="font-size:10px;color:var(--text-dim)">基準日:</span>
+            <input type="date" id="baseDateGas" class="base-date-input" onchange="buildRelativeCharts()">
+            <button class="range-btn" onclick="setBaseToRangeStart('gas')" style="font-size:10px">期間開始日に設定</button>
+          </div>
+          <div class="chart-canvas-wrap"><canvas id="gasRelChart"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Power Markets — Indexed</div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap;">
+            <span class="corr-label" style="font-size:10px;color:var(--text-dim)">基準日:</span>
+            <input type="date" id="baseDatePower" class="base-date-input" onchange="buildRelativeCharts()">
+            <button class="range-btn" onclick="setBaseToRangeStart('power')" style="font-size:10px">期間開始日に設定</button>
+          </div>
+          <div class="chart-canvas-wrap"><canvas id="powerRelChart"></canvas></div>
         </div>
       </div>
-      <div class="chart-canvas-wrap"><canvas id="powerChart"></canvas></div>
-    </div>
-  </div>
-</div>
-
-<!-- CORRELATION TAB -->
-<div class="tab-panel" id="tab-correlation">
-  <div class="corr-controls">
-    <span class="corr-label">WINDOW:</span>
-    <select class="corr-select" id="corrWindow" onchange="updateCorrelation()">
-      <option value="30">1ヶ月</option>
-      <option value="90" selected>3ヶ月</option>
-      <option value="365">1年</option>
-      <option value="1095">3年</option>
-    </select>
-  </div>
-
-  <div class="corr-grid">
-    <!-- 上段: マトリクス + ローリング相関 -->
-    <div class="corr-top-row">
-      <div class="corr-matrix-wrap">
-        <div class="matrix-title">Correlation Matrix</div>
-        <div id="corrMatrixContainer"></div>
-      </div>
-
-      <div class="rolling-wrap" style="margin-top:0; grid-column: auto;">
-        <div class="matrix-title">Rolling 30-Day Correlation — select pair below</div>
-        <div class="rolling-canvas-wrap"><canvas id="rollingChart"></canvas></div>
-      </div>
     </div>
 
-    <!-- 下段: 散布図（全幅） -->
-    <div class="scatter-wrap">
-      <div class="scatter-controls">
-        <span>X:</span>
-        <select class="scatter-select" id="scatterX" onchange="updateScatter()">
-          <option value="0">Henry Hub</option>
-          <option value="1">TTF</option>
-          <option value="2">JKM</option>
-          <option value="3">EEX Power</option>
-          <option value="4">JEPX</option>
-        </select>
-        <span>vs Y:</span>
-        <select class="scatter-select" id="scatterY" onchange="updateScatter()">
-          <option value="0">Henry Hub</option>
-          <option value="1" selected>TTF</option>
-          <option value="2">JKM</option>
-          <option value="3">EEX Power</option>
-          <option value="4">JEPX</option>
+    <!-- ══════════════════════════════════════════════
+         MONTHLY TAB  (新規)
+    ══════════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-monthly">
+
+      <!-- Status bar -->
+      <div class="monthly-status-bar">
+        <div class="m-status-dot" id="mStatusDot"></div>
+        <span id="mStatusText">データ未取得 — タブを開くと自動で読み込みます</span>
+      </div>
+
+      <!-- Controls -->
+      <div class="monthly-controls">
+        <span class="corr-label">期間:</span>
+        <select id="mRangeSelect" onchange="renderMonthly()">
+          <option value="12">12ヶ月</option>
+          <option value="24" selected>24ヶ月</option>
+          <option value="36">36ヶ月</option>
+          <option value="60">60ヶ月</option>
         </select>
       </div>
-      <div class="scatter-canvas-wrap"><canvas id="scatterChart"></canvas></div>
-    </div>
-  </div>
-</div>
 
-<!-- SOURCE TAB -->
-<div class="tab-panel" id="tab-source">
-  <div class="section-label">Data Sources</div>
-  <div class="source-grid">
+      <!-- KPI cards -->
+      <div class="monthly-kpi-row">
+        <div class="monthly-kpi" style="--kpi-color:#00d4ff">
+          <div class="mkpi-label">JLC（日本LNG輸入CIF）</div>
+          <div class="mkpi-value" id="mkpiJlc">—</div>
+          <div class="mkpi-sub">$/MMBtu · 月次</div>
+          <div class="mkpi-chg"  id="mkpiJlcChg"></div>
+        </div>
+        <div class="monthly-kpi" style="--kpi-color:#ff6b35">
+          <div class="mkpi-label">JCC（日本原油CIF）</div>
+          <div class="mkpi-value" id="mkpiJcc">—</div>
+          <div class="mkpi-sub">$/bbl · 月次</div>
+          <div class="mkpi-chg"  id="mkpiJccChg"></div>
+        </div>
+        <div class="monthly-kpi" style="--kpi-color:#7fff6b">
+          <div class="mkpi-label">JKM（Asia LNG Spot）</div>
+          <div class="mkpi-value" id="mkpiJkm">—</div>
+          <div class="mkpi-sub">$/MMBtu · 週次→月次</div>
+          <div class="mkpi-chg"  id="mkpiJkmChg"></div>
+        </div>
+        <div class="monthly-kpi" style="--kpi-color:#ffcc00">
+          <div class="mkpi-label">Henry Hub</div>
+          <div class="mkpi-value" id="mkpiHh">—</div>
+          <div class="mkpi-sub">$/MMBtu · 月次</div>
+          <div class="mkpi-chg"  id="mkpiHhChg"></div>
+        </div>
+      </div>
 
-    <div class="source-card" style="--src-color:#4488ff">
-      <div class="source-header">
-        <div class="source-name">Henry Hub Natural Gas</div>
-        <span class="source-badge live" id="badge-henry">LIVE</span>
+      <!-- Legend -->
+      <div class="monthly-legend">
+        <div class="m-legend-item"><div class="m-legend-dot" style="background:#00d4ff"></div>JLC</div>
+        <div class="m-legend-item"><div class="m-legend-dot" style="background:#ff6b35"></div>JCC (÷5.8 $/MMBtu換算)</div>
+        <div class="m-legend-item"><div class="m-legend-dot" style="background:#7fff6b"></div>JKM</div>
+        <div class="m-legend-item"><div class="m-legend-dot" style="background:#ffcc00"></div>Henry Hub</div>
       </div>
-      <div class="source-ticker">NG=F / NGc1</div>
-      <div class="source-meta-row"><span class="source-key">取引所</span><span>NYMEX (CME Group)</span></div>
-      <div class="source-meta-row"><span class="source-key">単位</span><span>USD/MMBtu</span></div>
-      <div class="source-meta-row"><span class="source-key">更新</span><span>取引日翌日（終値）</span></div>
-      <div class="source-urls">
-        <div class="source-url-label">取得先 URL</div>
-        <a class="source-url" href="https://finance.yahoo.com/quote/NG=F" target="_blank">https://finance.yahoo.com/quote/NG=F</a>
-        <a class="source-url" href="https://www.eia.gov/dnav/ng/hist/rngwhhdd.htm" target="_blank">https://www.eia.gov/dnav/ng/hist/rngwhhdd.htm</a>
-      </div>
-      <div class="source-note">EIAは週次スポット価格（無料・公式）。Yahoo FinanceはNG=Fで近限月先物を取得可。</div>
-    </div>
 
-    <div class="source-card" style="--src-color:#00ff88">
-      <div class="source-header">
-        <div class="source-name">TTF Natural Gas</div>
-        <span class="source-badge live" id="badge-ttf">LIVE</span>
+      <!-- Main timeseries -->
+      <div class="monthly-chart-card monthly-chart-wide" style="margin-bottom:16px">
+        <div class="chart-title"><span>月次価格推移（$/MMBtu 統一軸）</span></div>
+        <div style="height:300px;position:relative"><canvas id="mTimeseriesChart"></canvas></div>
       </div>
-      <div class="source-ticker">TTF=F</div>
-      <div class="source-meta-row"><span class="source-key">取引所</span><span>ICE Endex</span></div>
-      <div class="source-meta-row"><span class="source-key">単位</span><span>EUR/MWh</span></div>
-      <div class="source-meta-row"><span class="source-key">更新</span><span>取引日翌日（終値）</span></div>
-      <div class="source-urls">
-        <div class="source-url-label">取得先 URL</div>
-        <a class="source-url" href="https://finance.yahoo.com/quote/TTF=F" target="_blank">https://finance.yahoo.com/quote/TTF=F</a>
-        <a class="source-url" href="https://www.theice.com/products/27996665/Dutch-TTF-Gas-Futures" target="_blank">https://www.theice.com/products/27996665/Dutch-TTF-Gas-Futures</a>
-      </div>
-      <div class="source-note">ICE公式はリアルタイム・履歴とも有料。Yahoo Finance TTF=Fは遅延ありだが無料で利用可能。</div>
-    </div>
 
-    <div class="source-card" style="--src-color:#ffcc00">
-      <div class="source-header">
-        <div class="source-name">JKM LNG Price</div>
-        <span class="source-badge est" id="badge-jkm">ESTIMATE</span>
+      <!-- Corr matrix + rolling corr -->
+      <div class="monthly-two-col">
+        <div class="monthly-chart-card">
+          <div class="chart-title"><span>相関マトリックス</span> Pearson R</div>
+          <div id="mCorrMatrix" style="min-height:160px;display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-size:12px">
+            データ取得後に表示
+          </div>
+        </div>
+        <div class="monthly-chart-card">
+          <div class="chart-title"><span>ローリング相関 vs JLC</span> 12ヶ月窓</div>
+          <div style="height:200px;position:relative"><canvas id="mRollingChart"></canvas></div>
+        </div>
       </div>
-      <div class="source-ticker">JKM=F (CME) / Platts JKM</div>
-      <div class="source-meta-row"><span class="source-key">算出元</span><span>CME Group / S&P Global Platts</span></div>
-      <div class="source-meta-row"><span class="source-key">単位</span><span>USD/MMBtu</span></div>
-      <div class="source-meta-row"><span class="source-key">更新</span><span>取引日翌日（終値、遅延あり）</span></div>
-      <div class="source-urls">
-        <div class="source-url-label">取得先 URL</div>
-        <a class="source-url" href="https://finance.yahoo.com/quote/JKM=F" target="_blank">https://finance.yahoo.com/quote/JKM=F</a>
-        <a class="source-url" href="https://www.investing.com/commodities/lng-japan-korea-marker-platts-futures-historical-data" target="_blank">investing.com — Historical CSV（手動DL）</a>
-        <a class="source-url" href="https://www.spglobal.com/commodityinsights/en/our-methodology/price-assessments/natural-gas/jkm" target="_blank">S&P Global Platts JKM（要契約）</a>
-      </div>
-      <div class="source-note">Yahoo Finance の JKM=F（CME上場のJKM先物）を自動取得。Platts公式JKMとは若干異なるが日次モニタリングとして実用的。より正確なデータはinvesting.comからCSVをダウンロードしてインポート可。</div>
-    </div>
 
-    <div class="source-card" style="--src-color:#ff8844">
-      <div class="source-header">
-        <div class="source-name">EEX Power Futures</div>
-        <span class="source-badge est" id="badge-eex">ESTIMATE</span>
+      <!-- Scatter plots -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px" id="mScatterRow">
+        <div class="monthly-chart-card">
+          <div class="chart-title"><span>JLC vs JCC</span></div>
+          <div style="height:220px;position:relative"><canvas id="mScatter1"></canvas></div>
+        </div>
+        <div class="monthly-chart-card">
+          <div class="chart-title"><span>JLC vs JKM</span></div>
+          <div style="height:220px;position:relative"><canvas id="mScatter2"></canvas></div>
+        </div>
+        <div class="monthly-chart-card">
+          <div class="chart-title"><span>JLC vs HH</span></div>
+          <div style="height:220px;position:relative"><canvas id="mScatter3"></canvas></div>
+        </div>
       </div>
-      <div class="source-ticker">EEX-PF (German Baseload)</div>
-      <div class="source-meta-row"><span class="source-key">取引所</span><span>European Energy Exchange (EEX)</span></div>
-      <div class="source-meta-row"><span class="source-key">単位</span><span>EUR/MWh</span></div>
-      <div class="source-meta-row"><span class="source-key">更新</span><span>毎営業日（無料公開あり）</span></div>
-      <div class="source-urls">
-        <div class="source-url-label">取得先 URL</div>
-        <a class="source-url" href="https://www.eex.com/en/market-data/power/futures" target="_blank">https://www.eex.com/en/market-data/power/futures</a>
-        <a class="source-url" href="https://www.eex.com/en/market-data/power/futures#%7B%22snippetpicker%22%3A%22EEX%20German%20Power%20Future%22%7D" target="_blank">EEX German Power Future (終値データ)</a>
-      </div>
-      <div class="source-note">EEXはWebサイトで前日終値を無料公開。CSVダウンロード可。Bloomberg経由での自動取得も一般的（EGYBF1 Comdty等）。</div>
-    </div>
 
-    <div class="source-card" style="--src-color:#cc44ff">
-      <div class="source-header">
-        <div class="source-name">JEPX スポット市場</div>
-        <span class="source-badge est" id="badge-jepx">ESTIMATE</span>
-      </div>
-      <div class="source-ticker">JEPX-TK（東京エリアプライス）</div>
-      <div class="source-meta-row"><span class="source-key">取引所</span><span>日本卸電力取引所（JEPX）</span></div>
-      <div class="source-meta-row"><span class="source-key">単位</span><span>円/kWh（前日スポット日次平均）</span></div>
-      <div class="source-meta-row"><span class="source-key">更新</span><span>前日渡し・毎営業日</span></div>
-      <div class="source-urls">
-        <div class="source-url-label">取得先 URL</div>
-        <a class="source-url" href="https://japanesepower.org/jepxSpot.csv" target="_blank">https://japanesepower.org/jepxSpot.csv（全エリア30分コマ）</a>
-        <a class="source-url" href="https://www.jepx.jp/electricpower/market-data/spot/" target="_blank">https://www.jepx.jp（公式・CSVダウンロードはPOST必要）</a>
-        <a class="source-url" href="https://japanesepower.org/" target="_blank">https://japanesepower.org（非公式ミラー・CORS対応）</a>
-      </div>
-      <div class="source-note">japanesepower.orgが再配布するJEPX全エリアの30分コマCSVを取得し、日次平均に集計。Power Marketsチャートのエリアセレクタで9エリア切替可能。円/kWhは右軸に独立表示。</div>
-    </div>
-
-  </div>
-
-  <div class="section-label" style="margin-top:32px">CSV Import — energy_data.csv</div>
-  <div class="source-import-wrap">
-    <div class="import-bar">
-      <div class="import-group">
-        <span class="import-label" style="min-width:120px">energy_data.csv</span>
-        <label class="file-btn">SELECT FILE <input type="file" accept=".csv" onchange="loadCombinedCSV(event)" hidden></label>
-        <span class="import-status" id="status-combined">— not loaded</span>
+      <div class="data-note">
+        <strong>データソース：</strong>
+        JLC・JCC = <a href="https://www.customs.go.jp/toukei/info/" target="_blank">財務省貿易統計</a>（HS 2711.11 / HS 2709）·
+        JKM = Yahoo Finance (<code>JKM=F</code>) 週次→月次平均 ·
+        Henry Hub = <a href="https://api.eia.gov/" target="_blank">EIA API</a> (月次)<br>
+        ※ JCC ÷5.8 で $/MMBtu 換算。税関統計はCORSのためブラウザ直接取得不可 — デモデータを表示。
+        本番環境ではPython Proxyサーバー経由で取得してください。
       </div>
     </div>
-    <div class="csv-format-note">
-      <div class="source-url-label">CSV フォーマット（fetch_energy.py が生成するファイル）</div>
-      <code class="csv-example">date,henry_hub,ttf,jkm,jepx_system,jepx_hokkaido,jepx_tohoku,jepx_tokyo,...<br>2026/04/01,2.85,38.2,13.4,10.1,9.8,10.0,10.3,...<br>2026/04/02,2.90,38.5,13.6,10.2,9.9,10.1,10.4,...</code>
-      <div style="font-size:11px;color:var(--text-dim);margin-top:8px">fetch_energy.py を実行して生成した ~/energy_data.csv をそのまま読み込めます。</div>
+
+    <!-- ══════════════════════════════════════════════
+         CORRELATION TAB
+    ══════════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-correlation">
+      <div class="corr-controls">
+        <span class="corr-label">WINDOW:</span>
+        <select class="corr-select" id="corrWindow" onchange="updateCorrelation()">
+          <option value="30">1ヶ月</option>
+          <option value="90" selected>3ヶ月</option>
+          <option value="365">1年</option>
+          <option value="1095">3年</option>
+        </select>
+      </div>
+      <div class="corr-grid">
+        <div class="corr-top-row">
+          <div class="corr-matrix-wrap">
+            <div class="matrix-title">Correlation Matrix (Daily)</div>
+            <div id="corrMatrixContainer"></div>
+          </div>
+          <div class="rolling-wrap">
+            <div class="matrix-title">Rolling 30-Day Correlation — select pair below</div>
+            <div class="rolling-canvas-wrap"><canvas id="rollingChart"></canvas></div>
+          </div>
+        </div>
+        <div class="scatter-wrap">
+          <div class="scatter-controls">
+            <span>X:</span>
+            <select class="scatter-select" id="scatterX" onchange="updateScatter();updateRolling()">
+              <option value="0">Henry Hub</option>
+              <option value="1">TTF</option>
+              <option value="2">JKM</option>
+              <option value="3">EEX Power</option>
+              <option value="4">JEPX</option>
+              <option value="5">WTI</option>
+            </select>
+            <span>vs Y:</span>
+            <select class="scatter-select" id="scatterY" onchange="updateScatter();updateRolling()">
+              <option value="0">Henry Hub</option>
+              <option value="1" selected>TTF</option>
+              <option value="2">JKM</option>
+              <option value="3">EEX Power</option>
+              <option value="4">JEPX</option>
+              <option value="5">WTI</option>
+            </select>
+          </div>
+          <div class="scatter-canvas-wrap"><canvas id="scatterChart"></canvas></div>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
 
+    <!-- ══════════════════════════════════════════════
+         ALERTS TAB
+    ══════════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-alerts">
+      <div class="section-label">Price Alerts</div>
+      <div class="alert-form">
+        <select class="alert-select" id="alertMarket">
+          <option value="Henry Hub">Henry Hub</option>
+          <option value="TTF">TTF</option>
+          <option value="JKM (est.)">JKM (est.)</option>
+          <option value="EEX Power">EEX Power</option>
+        </select>
+        <select class="alert-select" id="alertDir">
+          <option value="above">Above ↑</option>
+          <option value="below">Below ↓</option>
+        </select>
+        <input class="alert-input" type="number" id="alertPrice" placeholder="Price" step="0.01">
+        <button class="add-alert-btn" onclick="addAlert()">+ ADD ALERT</button>
+      </div>
+      <div class="alerts-list" id="alertsList">
+        <div style="font-size:12px;color:var(--text-dim);padding:12px 0">No alerts set.</div>
+      </div>
+    </div>
 
-<div class="tab-panel" id="tab-alerts">
-  <div class="section-label">Price Alerts</div>
-  <div class="alert-form">
-    <select class="alert-select" id="alertMarket">
-      <option value="Henry Hub">Henry Hub</option>
-      <option value="TTF">TTF</option>
-      <option value="JKM (est.)">JKM (est.)</option>
-      <option value="EEX Power">EEX Power</option>
-    </select>
-    <select class="alert-select" id="alertDir">
-      <option value="above">Above ↑</option>
-      <option value="below">Below ↓</option>
-    </select>
-    <input class="alert-input" type="number" id="alertPrice" placeholder="Price" step="0.01">
-    <button class="add-alert-btn" onclick="addAlert()">+ ADD ALERT</button>
-  </div>
-  <div class="alerts-list" id="alertsList">
-    <div style="font-size:12px; color:var(--text-dim); padding: 12px 0;">No alerts set.</div>
-  </div>
-</div>
-```
+    <!-- ══════════════════════════════════════════════
+         SOURCE TAB
+    ══════════════════════════════════════════════ -->
+    <div class="tab-panel" id="tab-source">
+      <div class="section-label">Data Sources — Daily（fetch_energy.py で取得）</div>
+      <div class="source-grid">
+        <div class="source-card" style="--src-color:#4488ff">
+          <div class="source-header"><div class="source-name">Henry Hub Natural Gas</div><span class="source-badge live" id="badge-henry">CSV</span></div>
+          <div class="source-ticker">NG=F</div>
+          <div class="source-meta-row"><span class="source-key">取引所</span><span>NYMEX (CME Group)</span></div>
+          <div class="source-meta-row"><span class="source-key">単位</span><span>USD/MMBtu</span></div>
+          <div class="source-meta-row"><span class="source-key">取得方法</span><span>yfinance ライブラリ（日次終値）</span></div>
+          <div class="source-meta-row"><span class="source-key">期間</span><span>直近5年（デフォルト1825日）</span></div>
+          <div class="source-urls">
+            <div class="source-url-label">参照先</div>
+            <a class="source-url" href="https://finance.yahoo.com/quote/NG=F" target="_blank">Yahoo Finance NG=F</a>
+          </div>
+          <div class="source-note">fetch_energy.py を実行すると yfinance 経由で自動取得。近限月先物の終値を使用。UTC日付をそのまま記録（JST変換なし）。</div>
+        </div>
+        <div class="source-card" style="--src-color:#00ff88">
+          <div class="source-header"><div class="source-name">TTF Natural Gas</div><span class="source-badge live" id="badge-ttf">CSV</span></div>
+          <div class="source-ticker">TTF=F</div>
+          <div class="source-meta-row"><span class="source-key">取引所</span><span>ICE Endex</span></div>
+          <div class="source-meta-row"><span class="source-key">単位</span><span>EUR/MWh</span></div>
+          <div class="source-meta-row"><span class="source-key">取得方法</span><span>yfinance ライブラリ（日次終値）</span></div>
+          <div class="source-meta-row"><span class="source-key">期間</span><span>直近5年（デフォルト1825日）</span></div>
+          <div class="source-urls">
+            <div class="source-url-label">参照先</div>
+            <a class="source-url" href="https://finance.yahoo.com/quote/TTF=F" target="_blank">Yahoo Finance TTF=F</a>
+          </div>
+          <div class="source-note">ICE公式データは有料のため、Yahoo Finance の TTF=F（遅延あり）を使用。欧州ガス市場の参照価格として実用上は十分。</div>
+        </div>
+        <div class="source-card" style="--src-color:#ffcc00">
+          <div class="source-header"><div class="source-name">JKM LNG Price</div><span class="source-badge live" id="badge-jkm">CSV</span></div>
+          <div class="source-ticker">JKM=F</div>
+          <div class="source-meta-row"><span class="source-key">算出元</span><span>CME Group（Platts JKM連動先物）</span></div>
+          <div class="source-meta-row"><span class="source-key">単位</span><span>USD/MMBtu</span></div>
+          <div class="source-meta-row"><span class="source-key">取得方法</span><span>yfinance ライブラリ（日次終値）</span></div>
+          <div class="source-meta-row"><span class="source-key">期間</span><span>直近5年（デフォルト1825日）</span></div>
+          <div class="source-urls">
+            <div class="source-url-label">参照先</div>
+            <a class="source-url" href="https://finance.yahoo.com/quote/JKM=F" target="_blank">Yahoo Finance JKM=F</a>
+          </div>
+          <div class="source-note">S&P Global Platts公式JKMとは異なりCME上場先物。日次モニタリング用途では実用的。正式なJKMはPlatts契約が必要。</div>
+        </div>
+        <div class="source-card" style="--src-color:#ff2255">
+          <div class="source-header"><div class="source-name">WTI Crude Oil</div><span class="source-badge live" id="badge-wti">CSV</span></div>
+          <div class="source-ticker">CL=F</div>
+          <div class="source-meta-row"><span class="source-key">取引所</span><span>NYMEX (CME Group)</span></div>
+          <div class="source-meta-row"><span class="source-key">単位</span><span>USD/bbl</span></div>
+          <div class="source-meta-row"><span class="source-key">取得方法</span><span>yfinance ライブラリ（日次終値）</span></div>
+          <div class="source-meta-row"><span class="source-key">期間</span><span>直近5年（デフォルト1825日）</span></div>
+          <div class="source-urls">
+            <div class="source-url-label">参照先</div>
+            <a class="source-url" href="https://finance.yahoo.com/quote/CL=F" target="_blank">Yahoo Finance CL=F</a>
+          </div>
+          <div class="source-note">WTI近限月先物の終値。JCCとの比較・原油市況のリファレンスとして使用。</div>
+        </div>
+        <div class="source-card" style="--src-color:#cc44ff">
+          <div class="source-header"><div class="source-name">JEPX スポット市場</div><span class="source-badge live" id="badge-jepx">CSV</span></div>
+          <div class="source-ticker">全9エリア＋システムプライス</div>
+          <div class="source-meta-row"><span class="source-key">取引所</span><span>日本卸電力取引所（JEPX）</span></div>
+          <div class="source-meta-row"><span class="source-key">単位</span><span>円/kWh（30分コマ → 日次平均）</span></div>
+          <div class="source-meta-row"><span class="source-key">取得方法</span><span>japanesepower.org CSV 直接ダウンロード</span></div>
+          <div class="source-meta-row"><span class="source-key">期間</span><span>2010年4月〜（全期間）</span></div>
+          <div class="source-urls">
+            <div class="source-url-label">取得先</div>
+            <a class="source-url" href="https://japanesepower.org/jepxSpot.csv" target="_blank">japanesepower.org/jepxSpot.csv</a>
+          </div>
+          <div class="source-note">JEPXの30分コマデータを再配布するミラーサイト。2010年4月から現在まで全期間取得可能。fetch_energy.py で日次平均に集計。北海道・東北・東京・中部・北陸・関西・中国・四国・九州・システムの10エリアに対応。</div>
+        </div>
+      </div>
 
-  </div>
-</div>
+      <div class="section-label" style="margin-top:28px">Data Sources — Monthly（fetch_energy.py で取得）</div>
+      <div class="source-grid">
+        <div class="source-card" style="--src-color:#00d4ff">
+          <div class="source-header"><div class="source-name">JLC — 日本LNG輸入CIF価格</div><span class="source-badge est" id="badge-jlc">CSV</span></div>
+          <div class="source-ticker">財務省貿易統計 HS 2711.11（液化天然ガス）</div>
+          <div class="source-meta-row"><span class="source-key">単位</span><span>USD/MMBtu</span></div>
+          <div class="source-meta-row"><span class="source-key">計算式</span><span>CIF金額(千円)×1000 ÷ 為替(円/$) ÷ 数量(MT) ÷ 52</span></div>
+          <div class="source-meta-row"><span class="source-key">更新</span><span>翌月末（速報）</span></div>
+          <div class="source-meta-row"><span class="source-key">取得方法</span><span>e-Stat 統計品別表CSV直接ダウンロード</span></div>
+          <div class="source-urls">
+            <div class="source-url-label">取得先</div>
+            <a class="source-url" href="https://www.e-stat.go.jp/stat-search/files?tclass1=000001013183&tclass2=000001013185&cycle=1" target="_blank">e-Stat 統計品別表 輸入 月次</a>
+          </div>
+          <div class="source-note">e-Stat の統計品別表（輸入・月次）CSVをダウンロードし、HS 2711.11（液化天然ガス）の金額・数量を抽出。月次平均JPY/USDで円建て金額をドル換算し、熱量換算係数52 MMBtu/tでMMBtu単価を算出。CSVは年ごとに1ファイル（累計形式）。毎年末に最新年のstatInfIdをスクリプトに追加する運用。</div>
+        </div>
+        <div class="source-card" style="--src-color:#ff6b35">
+          <div class="source-header"><div class="source-name">JCC — 日本原油輸入CIF価格</div><span class="source-badge est" id="badge-jcc">CSV</span></div>
+          <div class="source-ticker">財務省貿易統計 HS 2709（石油及び歴青油・原油）</div>
+          <div class="source-meta-row"><span class="source-key">単位</span><span>USD/bbl</span></div>
+          <div class="source-meta-row"><span class="source-key">計算式</span><span>CIF金額(千円)×1000 ÷ 為替(円/$) ÷ 数量(kL) ÷ 6.289</span></div>
+          <div class="source-meta-row"><span class="source-key">更新</span><span>翌月末（速報）</span></div>
+          <div class="source-meta-row"><span class="source-key">取得方法</span><span>e-Stat 統計品別表CSV直接ダウンロード（JLCと同一ファイル）</span></div>
+          <div class="source-urls">
+            <div class="source-url-label">取得先</div>
+            <a class="source-url" href="https://www.e-stat.go.jp/stat-search/files?tclass1=000001013183&tclass2=000001013185&cycle=1" target="_blank">e-Stat 統計品別表 輸入 月次</a>
+          </div>
+          <div class="source-note">日本のLNG長期契約価格算式の参照原油価格。JLCと同一CSVファイルからHS 2709で抽出。kL→bbl換算係数は6.289（API標準）。Monthlyタブでは$/bblのまま表示、時系列比較時は÷5.8で$/MMBtu換算。</div>
+        </div>
+        <div class="source-card" style="--src-color:#ffcc00">
+          <div class="source-header"><div class="source-name">月次為替レート（JPY/USD）</div><span class="source-badge live">CSV</span></div>
+          <div class="source-ticker">JPY=X</div>
+          <div class="source-meta-row"><span class="source-key">単位</span><span>円/ドル（月次平均）</span></div>
+          <div class="source-meta-row"><span class="source-key">取得方法</span><span>yfinance 日次データ → 月次平均を計算</span></div>
+          <div class="source-meta-row"><span class="source-key">用途</span><span>JLC・JCC の円建て→ドル建て換算</span></div>
+          <div class="source-urls">
+            <div class="source-url-label">参照先</div>
+            <a class="source-url" href="https://finance.yahoo.com/quote/JPY=X" target="_blank">Yahoo Finance JPY=X</a>
+          </div>
+          <div class="source-note">JLC・JCC計算専用。日次終値を月内で平均した月次平均レートを使用。CSVにはjpy_usd列として月初行に出力。Webアプリの表示には使用しない。</div>
+        </div>
+      </div>
+
+      <div class="section-label" style="margin-top:28px">CSV Import (energy_data.csv)</div>
+      <div class="source-import-wrap">
+        <div class="import-bar">
+          <div class="import-group">
+            <span class="import-label" style="min-width:120px">energy_data.csv</span>
+            <label class="file-btn">SELECT FILE <input type="file" accept=".csv" onchange="loadCombinedCSV(event)" hidden></label>
+            <span class="import-status" id="status-combined">— not loaded</span>
+          </div>
+        </div>
+        <div class="csv-format-note">
+          <div class="source-url-label">CSV フォーマット（fetch_energy.py が生成するファイル）</div>
+          <code class="csv-example">date,henry_hub,ttf,jkm,wti,jepx_system,jepx_tokyo,...,jlc,jcc,jpy_usd<br>2024-01-22,2.85,38.2,13.4,75.1,10.5,10.3,...,,,<br>2024-02-01,,,,,,,,...,14.2,82.5,149.8  ← 月初のみjlc/jcc/jpy_usd<br>2024-02-02,2.81,38.0,13.2,74.9,9.9,10.0,...,,,</code>
+          <div style="font-size:11px;color:var(--text-dim);margin-top:8px">
+            ・日次列（henry_hub・ttf・jkm・wti・jepx_*）: 各営業日に値あり、休場日は行なし<br>
+            ・月次列（jlc・jcc・jpy_usd）: 月初行（YYYY-MM-01）のみ値あり、他は空欄<br>
+            ・このCSV1枚をインポートするだけでDaily・Monthly両タブが自動反映されます<br>
+            ・fetch_energy.py を月次実行し、最新のCSVを再インポートして更新してください
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- .content -->
+</div><!-- .app -->
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-
 <script>
-// ============================================================
-// DATA ENGINE
-// ============================================================
+// ════════════════════════════════════════════════════════════════
+// GLOBAL CHART DEFAULTS
+// ════════════════════════════════════════════════════════════════
 Chart.defaults.color = '#5a7090';
 Chart.defaults.borderColor = '#1e2d45';
 Chart.defaults.font.family = "'IBM Plex Mono', monospace";
 Chart.defaults.font.size = 11;
 
+// ════════════════════════════════════════════════════════════════
+// DAILY DATA ENGINE  (unchanged from original)
+// ════════════════════════════════════════════════════════════════
 const MARKETS = [
-  { id: 'henry', name: 'Henry Hub', ticker: 'NG=F', unit: '$/MMBtu', color: '#4488ff', market: 'NYMEX', yKey: 'henry', live: true },
-  { id: 'ttf',   name: 'TTF Natural Gas', ticker: 'TTF=F', unit: '€/MWh', color: '#00ff88', market: 'ICE', yKey: 'ttf', live: true },
-  { id: 'jkm',   name: 'JKM LNG', ticker: 'JKM=F', unit: '$/MMBtu', color: '#ffcc00', market: 'CME', yKey: 'jkm', live: false },
-  { id: 'jepx',  name: 'JEPX スポット（東京）', ticker: 'JEPX-TK', unit: '円/kWh', color: '#cc44ff', market: 'JEPX', yKey: 'jepx', live: false },
-  { id: 'eex',   name: 'EEX Power', ticker: 'EEX-PF', unit: '€/MWh', color: '#ff8844', market: 'EEX', yKey: 'eex', live: false },
+  { id:'henry', name:'Henry Hub',          ticker:'NG=F',   unit:'$/MMBtu', color:'#4488ff', market:'NYMEX', yKey:'henry', live:true  },
+  { id:'ttf',   name:'TTF Natural Gas',    ticker:'TTF=F',  unit:'€/MWh',  color:'#00ff88', market:'ICE',   yKey:'ttf',   live:true  },
+  { id:'jkm',   name:'JKM LNG',            ticker:'JKM=F',  unit:'$/MMBtu',color:'#ffcc00', market:'CME',   yKey:'jkm',   live:false },
+  { id:'jepx',  name:'JEPX スポット（東京）',ticker:'JEPX-TK',unit:'円/kWh', color:'#cc44ff', market:'JEPX',  yKey:'jepx',  live:false },
+  { id:'eex',   name:'EEX Power',          ticker:'EEX-PF', unit:'€/MWh',  color:'#ff8844', market:'EEX',   yKey:'eex',   live:false },
+  { id:'wti',   name:'WTI Crude Oil',      ticker:'CL=F',   unit:'$/bbl',  color:'#ff2255', market:'NYMEX', yKey:'wti',   live:true  },
 ];
 
-// --- Synthetic fallback ---
-function generateSeries(start, vol, mean, days=90) {
-  const data = [];
-  let val = start;
-  for (let i = 0; i < days; i++) {
-    val = val * (1 + (Math.random() - 0.5) * vol);
-    val = val * 0.02 + mean * 0.98;
-    data.push(Math.max(val, start * 0.3));
-  }
-  return data;
-}
-
-function generateCorrelated(base, correlation, scale) {
-  return base.map(v => {
-    const noise = (Math.random() - 0.5) * 2;
-    const corr_part = ((v - 3) / 3) * correlation;
-    return Math.max(0.5, scale + corr_part * scale * 0.4 + noise * scale * 0.08 * (1 - Math.abs(correlation)));
-  });
-}
-
-// --- Labels: 動的生成（最大5年分） ---
-function makeLabels(n) {
-  const out = [];
-  const d = new Date();
-  while (out.length < n) {
-    out.unshift(d.toLocaleDateString('ja-JP', { year: 'numeric', month: 'short', day: 'numeric' }));
-    d.setDate(d.getDate() - 1);
-  }
-  return out;
-}
-// 最大5年分（1825日）のラベルを用意
-const MAX_DAYS = 1825;
-const labelsAll = makeLabels(MAX_DAYS);
-
-// 後方互換のため labels90 も残す
-const labels90 = labelsAll.slice(-90);
-
-function getLabels(days) {
-  const n = Math.min(days, labelsAll.length);
-  return labelsAll.slice(-n);
-}
+const JEPX_AREAS = {
+  system:   {col:5,  label:'システムプライス'},
+  hokkaido: {col:6,  label:'北海道'},
+  tohoku:   {col:7,  label:'東北'},
+  tokyo:    {col:8,  label:'東京'},
+  chubu:    {col:9,  label:'中部'},
+  hokuriku: {col:10, label:'北陸'},
+  kansai:   {col:11, label:'関西'},
+  chugoku:  {col:12, label:'中国'},
+  shikoku:  {col:13, label:'四国'},
+  kyushu:   {col:14, label:'九州'},
+};
 
 let rawData = {};
-let dataSource = { henry: 'estimate', ttf: 'estimate', jkm: 'estimate', eex: 'estimate', jepx: 'estimate' };
+let dataSource = { henry:'estimate', ttf:'estimate', jkm:'estimate', eex:'estimate', jepx:'estimate', wti:'estimate' };
 let charts = {};
 let currentRange1 = 30;
 let currentRange2 = 30;
-let jepxArea = 'tokyo'; // default area
-
-// JEPX area column mapping (0-indexed in CSV)
-// Date, PeriodID, SellBid, BuyBid, ContractVol, SystemPrice, Hokkaido, Tohoku, Tokyo, Chuubu, Hokuriku, Kansai, Chuugoku, Shikoku, Kyushu...
-const JEPX_AREAS = {
-  system:   { col: 5,  label: 'システムプライス' },
-  hokkaido: { col: 6,  label: '北海道' },
-  tohoku:   { col: 7,  label: '東北' },
-  tokyo:    { col: 8,  label: '東京' },
-  chubu:    { col: 9,  label: '中部' },
-  hokuriku: { col: 10, label: '北陸' },
-  kansai:   { col: 11, label: '関西' },
-  chugoku:  { col: 12, label: '中国' },
-  shikoku:  { col: 13, label: '四国' },
-  kyushu:   { col: 14, label: '九州' },
-};
-
-// --- Yahoo Finance via allorigins proxy ---
-async function fetchYahoo(ticker, days = MAX_DAYS) {
-  const end = Math.floor(Date.now() / 1000);
-  const start = end - days * 24 * 3600 * 1.1;
-  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?interval=1d&period1=${Math.floor(start)}&period2=${end}`;
-  const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
-  const res = await fetch(proxy);
-  const json = await res.json();
-  const parsed = JSON.parse(json.contents);
-  const closes = parsed.chart.result[0].indicators.quote[0].close;
-  return closes.filter(v => v != null);
-}
-
-// --- JEPX via japanesepower.org CSV ---
-async function fetchJEPX(area = 'tokyo') {
-  const col = JEPX_AREAS[area].col;
-  const url = 'https://japanesepower.org/jepxSpot.csv';
-  const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
-  const res = await fetch(proxy);
-  const json = await res.json();
-  const lines = json.contents.trim().split('\n');
-
-  // Aggregate 48 periods per day → daily average
-  const dayMap = {};
-  for (const line of lines) {
-    const parts = line.split(',');
-    if (parts.length <= col) continue;
-    const date = parts[0].trim();
-    // Skip header or invalid lines
-    if (!/^\d{4}\/\d{2}\/\d{2}$/.test(date) && !/^\d{4}-\d{2}-\d{2}$/.test(date)) continue;
-    const val = parseFloat(parts[col]);
-    if (isNaN(val) || val <= 0) continue;
-    if (!dayMap[date]) dayMap[date] = [];
-    dayMap[date].push(val);
-  }
-
-  // Sort dates and compute daily averages
-  const sorted = Object.keys(dayMap).sort();
-  const dailyAvg = sorted.map(d => {
-    const arr = dayMap[d];
-    return arr.reduce((s, v) => s + v, 0) / arr.length;
-  });
-
-  return dailyAvg.slice(-90);
-}
-
-async function initData() {
-  // Init with synthetic first (instant display)
-  const henry0 = generateSeries(2.8, 0.06, 2.9, MAX_DAYS);
-  const ttf0 = generateCorrelated(henry0, 0.72, 38);
-  const jkm0 = generateCorrelated(henry0, 0.58, 14);
-  const eex0 = generateCorrelated(ttf0, 0.81, 72);
-  const jepx0 = generateSeries(10, 0.12, 10, MAX_DAYS);
-  rawData = { henry: henry0, ttf: ttf0, jkm: jkm0, eex: eex0, jepx: jepx0 };
-  buildCards();
-  buildGasChart(currentRange1);
-  buildPowerChart(currentRange2);
-
-  // Fetch real data in background
-  const btn = document.querySelector('.refresh-btn');
-  btn.textContent = '⟳ FETCHING...';
-  btn.disabled = true;
-
-  try {
-    const [henryReal, ttfReal, jkmReal, jepxReal] = await Promise.all([
-      fetchYahoo('NG=F', 90),
-      fetchYahoo('TTF=F', 90),
-      fetchYahoo('JKM=F', 90),
-      fetchJEPX(jepxArea)
-    ]);
-
-    if (henryReal.length >= 5) {
-      while (henryReal.length < MAX_DAYS) henryReal.unshift(henryReal[0]);
-      rawData.henry = henryReal.slice(-MAX_DAYS);
-      dataSource.henry = 'live';
-    }
-    if (ttfReal.length >= 5) {
-      while (ttfReal.length < MAX_DAYS) ttfReal.unshift(ttfReal[0]);
-      rawData.ttf = ttfReal.slice(-MAX_DAYS);
-      dataSource.ttf = 'live';
-    }
-    if (jkmReal.length >= 5) {
-      while (jkmReal.length < MAX_DAYS) jkmReal.unshift(jkmReal[0]);
-      rawData.jkm = jkmReal.slice(-MAX_DAYS);
-      dataSource.jkm = 'live';
-    }
-    if (jepxReal.length >= 5) {
-      while (jepxReal.length < MAX_DAYS) jepxReal.unshift(jepxReal[0]);
-      rawData.jepx = jepxReal.slice(-MAX_DAYS);
-      dataSource.jepx = 'live';
-    }
-
-    // Regenerate estimates based on real data where needed
-    if (dataSource.jkm === 'estimate') {
-      rawData.jkm = generateCorrelated(rawData.henry, 0.58, rawData.henry[rawData.henry.length-1] * 4.5);
-    }
-    if (dataSource.eex === 'estimate') {
-      rawData.eex = generateCorrelated(rawData.ttf, 0.81, rawData.ttf[rawData.ttf.length-1] * 1.8);
-    }
-  } catch(e) {
-    console.warn('Yahoo fetch failed, using synthetic data', e);
-  }
-
-  buildCards();
-  buildGasChart(currentRange1);
-  buildPowerChart(currentRange2);
-  updateSourceTags();
-
-  btn.textContent = '⟳ REFRESH';
-  btn.disabled = false;
-
-  const now = new Date();
-  document.getElementById('lastUpdated').textContent =
-    now.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-}
-
-function updateSourceTags() {
-  MARKETS.forEach(m => {
-    const src = dataSource[m.yKey];
-    // Card badge on dashboard
-    const card = document.getElementById(`card-source-${m.id}`);
-    if (card) {
-      if (src === 'live') {
-        card.textContent = 'LIVE';
-        card.style.color = 'var(--accent-green)';
-      } else if (src === 'csv') {
-        card.textContent = 'CSV';
-        card.style.color = 'var(--accent-green)';
-      } else {
-        card.textContent = 'EST';
-        card.style.color = 'var(--accent-yellow)';
-      }
-    }
-    // Badge on source tab
-    const badge = document.getElementById(`badge-${m.id}`);
-    if (badge) {
-      if (src === 'live') {
-        badge.textContent = 'LIVE';
-        badge.className = 'source-badge live';
-      } else if (src === 'csv') {
-        badge.textContent = 'CSV';
-        badge.className = 'source-badge live';
-      } else {
-        badge.textContent = 'ESTIMATE';
-        badge.className = 'source-badge est';
-      }
-    }
-  });
-}
-
-// --- Combined CSV Import (energy_data.csv) ---
-// 列マッピング: CSVヘッダー名 → rawDataキー
-const CSV_COL_MAP = {
-  'henry_hub':    'henry',
-  'ttf':          'ttf',
-  'jkm':          'jkm',
-  // EEXはCSVに含まれないのでマッピングなし
-  'jepx_tokyo':   'jepx',   // デフォルト表示用
-  // JEPX全エリアは別途保持
-  'jepx_system':   'jepx_system',
-  'jepx_hokkaido': 'jepx_hokkaido',
-  'jepx_tohoku':   'jepx_tohoku',
-  'jepx_chubu':    'jepx_chubu',
-  'jepx_hokuriku': 'jepx_hokuriku',
-  'jepx_kansai':   'jepx_kansai',
-  'jepx_chugoku':  'jepx_chugoku',
-  'jepx_kyushu':   'jepx_kyushu',
-  'jepx_shikoku':  'jepx_shikoku',
-};
-
-// 全JEPXエリアデータを保持する辞書
+let jepxArea = 'tokyo';
 let jepxAreaData = {};
 
-function loadCombinedCSV(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const lines = e.target.result.trim().split('\n');
-    if (lines.length < 2) {
-      showNotif('⚠ CSVが空か形式が正しくありません');
-      return;
+// ── CSV読込までのプレースホルダーデータ ──────────────────────────
+function _initPlaceholder(){
+  function flat(n, v){ return {values:Array(n).fill(v), dates:Array.from({length:n},(_,i)=>{
+    const d=new Date(); d.setDate(d.getDate()-(n-1-i)); return d.toISOString().slice(0,10);
+  })}; }
+  rawData={
+    henry:flat(2,0), ttf:flat(2,0), jkm:flat(2,0),
+    eex:flat(2,0),   jepx:flat(2,0), wti:flat(2,0),
+  };
+}
+
+function updateSourceTags(){
+  MARKETS.forEach(m=>{
+    const src=dataSource[m.yKey];
+    const card=document.getElementById(`card-source-${m.id}`);
+    if(card){
+      if(src==='live'){card.textContent='LIVE';card.style.color='var(--accent-green)';}
+      else if(src==='csv'){card.textContent='CSV';card.style.color='var(--accent-green)';}
+      else{card.textContent='EST';card.style.color='var(--accent-yellow)';}
     }
+    const badge=document.getElementById(`badge-${m.id}`);
+    if(badge){
+      if(src==='live'){badge.textContent='LIVE';badge.className='source-badge live';}
+      else if(src==='csv'){badge.textContent='CSV';badge.className='source-badge live';}
+      else{badge.textContent='ESTIMATE';badge.className='source-badge est';}
+    }
+  });
+}
 
-    // ヘッダー解析
-    const headers = lines[0].split(',').map(h => h.trim());
-    const colIndex = {};
-    headers.forEach((h, i) => { colIndex[h] = i; });
+// CSV列名 → Daily rawData キー のマッピング（月次列 jlc/jcc は別処理）
+const CSV_COL_MAP={
+  'henry_hub':'henry','ttf':'ttf','jkm':'jkm','wti':'wti',
+  'jepx_tokyo':'jepx',
+  'jepx_system':'jepx_system','jepx_hokkaido':'jepx_hokkaido',
+  'jepx_tohoku':'jepx_tohoku','jepx_chubu':'jepx_chubu',
+  'jepx_hokuriku':'jepx_hokuriku','jepx_kansai':'jepx_kansai',
+  'jepx_chugoku':'jepx_chugoku','jepx_kyushu':'jepx_kyushu',
+  'jepx_shikoku':'jepx_shikoku',
+};
 
-    // 各列のデータを収集
-    const colData = {};
-    headers.forEach(h => { colData[h] = []; });
+// ── CSV 日付の正規化 ──────────────────────────────────────────
+// "YYYY/MM/DD" と "YYYY-MM-DD" を "YYYY-MM-DD" に統一
+function normDate(s){ return s.trim().replace(/\//g,'-'); }
 
-    for (let i = 1; i < lines.length; i++) {
-      const parts = lines[i].split(',');
-      if (parts.length < 2) continue;
-      headers.forEach((h, j) => {
-        const v = parseFloat(parts[j]);
-        colData[h].push(isNaN(v) ? null : v);
+// ── CSV 読み込み：Daily + Monthly を1ファイルから構築 ─────────
+function parseCombinedCSVText(text, filename){
+    const lines=text.trim().split('\n');
+    if(lines.length<2){showNotif('⚠ CSV形式が正しくありません');return;}
+
+    const headers=lines[0].split(',').map(h=>h.trim());
+    const dateIdx=headers.indexOf('date');
+    if(dateIdx===-1){showNotif('⚠ date列が見つかりません');return;}
+
+    const colData={};
+    headers.forEach(h=>{colData[h]=[];});
+    const allDates=[];
+
+    for(let i=1;i<lines.length;i++){
+      const parts=lines[i].split(',');
+      if(parts.length<2) continue;
+      const d=normDate(parts[dateIdx]||'');
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(d)) continue;
+      allDates.push(d);
+      headers.forEach((h,j)=>{
+        if(h==='date'){ colData[h].push(d); return; }
+        const raw=parts[j]===undefined?'':parts[j].trim();
+        colData[h].push(raw===''?null:parseFloat(raw));
       });
     }
 
-    // rawDataに反映
-    let loaded = [];
-    Object.entries(CSV_COL_MAP).forEach(([csvCol, rawKey]) => {
-      if (!(csvCol in colData)) return;
-      const vals = colData[csvCol].filter(v => v !== null);
-      if (vals.length < 5) return;
+    const rowCount=allDates.length;
+    let loaded=[];
 
-      // MAX_DAYS分にパディング
-      while (vals.length < MAX_DAYS) vals.unshift(vals[0]);
-      rawData[rawKey] = vals.slice(-MAX_DAYS);
-      dataSource[rawKey] = 'csv';
+    Object.entries(CSV_COL_MAP).forEach(([csvCol,rawKey])=>{
+      if(!(csvCol in colData)) return;
+      const pairs=colData[csvCol]
+        .map((v,i)=>({v,d:allDates[i]}))
+        .filter(p=>p.v!==null&&!isNaN(p.v)&&p.d);
+      if(pairs.length<5) return;
+      rawData[rawKey]={values:pairs.map(p=>p.v), dates:pairs.map(p=>p.d)};
+      dataSource[rawKey]='csv';
       loaded.push(csvCol);
     });
 
-    // JEPXエリアデータを保持（エリア切替用）
-    const jepxCols = Object.keys(CSV_COL_MAP).filter(k => k.startsWith('jepx_'));
-    jepxCols.forEach(col => {
-      if (col in colData) {
-        const vals = colData[col].filter(v => v !== null);
-        if (vals.length >= 5) {
-          while (vals.length < MAX_DAYS) vals.unshift(vals[0]);
-          jepxAreaData[col] = vals.slice(-MAX_DAYS);
-        }
-      }
+    const jepxCols=Object.keys(CSV_COL_MAP).filter(k=>k.startsWith('jepx_'));
+    jepxCols.forEach(col=>{
+      if(!(col in colData)) return;
+      const pairs=colData[col]
+        .map((v,i)=>({v,d:allDates[i]}))
+        .filter(p=>p.v!==null&&!isNaN(p.v)&&p.d);
+      if(pairs.length>=5)
+        jepxAreaData[col]={values:pairs.map(p=>p.v),dates:pairs.map(p=>p.d)};
     });
-
-    // 現在選択中のJEPXエリアに応じてrawData.jepxを更新
-    const currentCol = `jepx_${jepxArea}`;
-    if (jepxAreaData[currentCol]) {
-      rawData.jepx = jepxAreaData[currentCol];
-      dataSource.jepx = 'csv';
+    const currentCol=`jepx_${jepxArea}`;
+    if(jepxAreaData[currentCol]){
+      rawData.jepx=jepxAreaData[currentCol]; dataSource.jepx='csv';
     }
 
-    // ステータス更新
-    const statusEl = document.getElementById('status-combined');
-    const n = lines.length - 1;
-    statusEl.textContent = `✓ ${file.name}  ${n}日分 / ${loaded.length}指標`;
-    statusEl.className = 'import-status loaded';
+    const mFromCSV = buildMonthlyFromCSV(colData, allDates);
+    if(mFromCSV){
+      mData = mFromCSV;
+      mDataLoaded = true;
+      setMStatus('ok',
+        `CSV読み込み完了 — JLC:${mFromCSV.srcJlc} / JCC:${mFromCSV.srcJcc} / `+
+        `JKM:${mFromCSV.srcJkm} / HH:${mFromCSV.srcHh} — ${rowCount}行`
+      );
+      loaded.push('monthly(jlc/jcc)');
+    }
 
-    // 画面更新
-    buildCards();
-    buildGasChart(currentRange1);
-    buildPowerChart(currentRange2);
+    const statusEl=document.getElementById('status-combined');
+    statusEl.textContent=`✓ ${filename}  ${rowCount}行 / ${loaded.length}指標`;
+    statusEl.className='import-status loaded';
+    document.getElementById('lastUpdated').textContent=
+      `${filename.replace('.csv','')} 読込済 ${new Date().toLocaleTimeString('ja-JP',{hour:'2-digit',minute:'2-digit'})}`;
+
+    if(mFromCSV && mFromCSV.srcJlc==='CSV'){
+      ['badge-jlc','badge-jcc'].forEach(id=>{
+        const el=document.getElementById(id);
+        if(el){el.textContent='CSV';el.className='source-badge live';}
+      });
+    }
+
+    buildCards(); buildGasChart(currentRange1); buildPowerChart(currentRange2);
     updateSourceTags();
-    if (document.getElementById('tab-correlation').classList.contains('active')) updateCorrelation();
+    if(document.getElementById('tab-correlation').classList.contains('active')) updateCorrelation();
+    if(mDataLoaded) renderMonthly();
+    showNotif(`✓ ${loaded.length}指標を読み込みました（${rowCount}行）`);
+}
 
-    showNotif(`✓ ${loaded.length}指標を読み込みました（${n}日分）`);
-  };
+function loadCombinedCSV(event){
+  const file=event.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>parseCombinedCSVText(e.target.result, file.name);
   reader.readAsText(file);
 }
 
-// JEPXエリア切替時にCSVデータがあればそちらを使う
-function getJepxDataForArea(area) {
-  const col = `jepx_${area}`;
-  return jepxAreaData[col] || null;
+async function autoFetchCSV(){
+  try{
+    const res=await fetch('./energy_data.csv');
+    if(!res.ok) return;
+    const text=await res.text();
+    parseCombinedCSVText(text,'energy_data.csv');
+  }catch(e){
+    // CSVが見つからない場合は手動アップロードを使用
+  }
 }
 
-// --- Legacy single-column CSV Import (後方互換) ---
-function loadCSV(event, key) {
-  const file = event.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const lines = e.target.result.trim().split('\n');
-    const values = [];
-    lines.forEach(line => {
-      const parts = line.split(',');
-      if (parts.length >= 2) {
-        const v = parseFloat(parts[1]);
-        if (!isNaN(v)) values.push(v);
-      }
+// ── CSV から Monthly データ構造を組み立てる ────────────────────
+// 返値: mData 互換オブジェクト、または null
+function buildMonthlyFromCSV(colData, allDates){
+  // 月次平均を計算するヘルパー
+  // pairs = [{date:'YYYY-MM-DD', value:Number}, ...]
+  // → {YYYY-MM: avg} のマップを返す
+  function toMonthlyAvg(pairs){
+    const map={};
+    pairs.forEach(({d,v})=>{
+      const ym=d.slice(0,7); // YYYY-MM
+      if(!map[ym]) map[ym]={sum:0,n:0};
+      map[ym].sum+=v; map[ym].n++;
     });
-    if (values.length < 5) {
-      showNotif('⚠ CSVのパースに失敗しました');
-      return;
-    }
-    while (values.length < MAX_DAYS) values.unshift(values[0]);
-    rawData[key] = values.slice(-MAX_DAYS);
-    dataSource[key] = 'csv';
-    buildCards();
-    buildGasChart(currentRange1);
-    buildPowerChart(currentRange2);
-    updateSourceTags();
-    if (document.getElementById('tab-correlation').classList.contains('active')) updateCorrelation();
-    showNotif(`✓ ${key.toUpperCase()} CSVを読み込みました`);
+    const result={};
+    Object.entries(map).forEach(([ym,{sum,n}])=>{ result[ym]=sum/n; });
+    return result;
+  }
+
+  // jlc / jcc: 月次列から非NaN行を抽出 (月初行のみのはず)
+  const jlcPairs=('jlc' in colData)
+    ? colData['jlc'].map((v,i)=>({d:allDates[i],v})).filter(p=>p.v!==null&&!isNaN(p.v))
+    : [];
+  const jccPairs=('jcc' in colData)
+    ? colData['jcc'].map((v,i)=>({d:allDates[i],v})).filter(p=>p.v!==null&&!isNaN(p.v))
+    : [];
+
+  // jlc/jcc どちらも全くない場合はnullを返す
+  const hasJlc=jlcPairs.length>=2;
+  const hasJcc=jccPairs.length>=2;
+
+  // jkm / henry_hub: 日次データから月次平均を生成
+  const jkmPairs=('jkm' in colData)
+    ? colData['jkm'].map((v,i)=>({d:allDates[i],v})).filter(p=>p.v!==null&&!isNaN(p.v))
+    : [];
+  const hhPairs=('henry_hub' in colData)
+    ? colData['henry_hub'].map((v,i)=>({d:allDates[i],v})).filter(p=>p.v!==null&&!isNaN(p.v))
+    : [];
+
+  const hasJkm=jkmPairs.length>=5;
+  const hasHh =hhPairs.length>=5;
+
+  // データが不十分な場合はnullを返す
+  if(!hasJlc || !hasJkm || !hasHh) return null;
+
+  // 月次マップ生成
+  const jlcMap=Object.fromEntries(jlcPairs.map(p=>[p.d.slice(0,7),p.v]));
+  const jccMap=hasJcc ? Object.fromEntries(jccPairs.map(p=>[p.d.slice(0,7),p.v])) : {};
+  const jkmMap=toMonthlyAvg(jkmPairs);
+  const hhMap =toMonthlyAvg(hhPairs);
+
+  // 共通 YYYY-MM を求める（JLC・JKM・HH全てに値がある月のみ）
+  const allYMs=new Set([...Object.keys(jlcMap),...Object.keys(jkmMap),...Object.keys(hhMap)]);
+  const common=[...allYMs]
+    .filter(ym=>jlcMap[ym]!=null&&jkmMap[ym]!=null&&hhMap[ym]!=null)
+    .sort();
+
+  if(common.length<2) return null;
+
+  return {
+    dates: common,
+    jlc:   common.map(ym=>jlcMap[ym]),
+    jcc:   common.map(ym=>jccMap[ym]??null),
+    jkm:   common.map(ym=>jkmMap[ym]),
+    hh:    common.map(ym=>hhMap[ym]),
+    srcJlc: 'CSV',
+    srcJcc: hasJcc?'CSV':'—',
+    srcJkm: 'CSV日次平均',
+    srcHh:  'CSV日次平均',
   };
-  reader.readAsText(file);
 }
 
-function getLatest(key) { return rawData[key][rawData[key].length - 1]; }
-function getYesterday(key) { return rawData[key][rawData[key].length - 2]; }
-function getPct(key) {
-  const now = getLatest(key);
-  const prev = getYesterday(key);
-  return ((now - prev) / prev * 100);
+function getJepxDataForArea(area){
+  return jepxAreaData[`jepx_${area}`]||null;
 }
+function getLatest(key){const v=rawData[key].values;return v[v.length-1];}
+function getYesterday(key){const v=rawData[key].values;return v[v.length-2];}
+function getPct(key){return((getLatest(key)-getYesterday(key))/getYesterday(key)*100);}
 
-// ============================================================
-// MARKET CARDS
-// ============================================================
-function buildCards() {
-  const grid = document.getElementById('marketGrid');
-  grid.innerHTML = '';
-
-  MARKETS.forEach((m, i) => {
-    const price = getLatest(m.yKey);
-    const pct = getPct(m.yKey);
-    const updown = pct >= 0 ? 'up' : 'down';
-    const arrow = pct >= 0 ? '▲' : '▼';
-
-    const card = document.createElement('div');
-    card.className = 'market-card';
-    card.style.setProperty('--card-color', m.color);
-    card.innerHTML = `
+function buildCards(){
+  const grid=document.getElementById('marketGrid'); grid.innerHTML='';
+  MARKETS.forEach(m=>{
+    const price=getLatest(m.yKey);
+    const pct=getPct(m.yKey);
+    const updown=pct>=0?'up':'down';
+    const arrow=pct>=0?'▲':'▼';
+    const card=document.createElement('div');
+    card.className='market-card'; card.style.setProperty('--card-color',m.color);
+    card.innerHTML=`
       <div class="card-header">
         <div class="card-ticker">${m.ticker}</div>
         <div style="display:flex;gap:6px;align-items:center">
-          <span id="card-source-${m.id}" style="font-size:9px;letter-spacing:0.1em;color:var(--accent-yellow)">${dataSource[m.yKey]==='live'?'LIVE':dataSource[m.yKey]==='csv'?'CSV':'EST'}</span>
+          <span id="card-source-${m.id}" style="font-size:9px;letter-spacing:.1em;color:var(--accent-yellow)">${dataSource[m.yKey]==='live'?'LIVE':dataSource[m.yKey]==='csv'?'CSV':'EST'}</span>
           <div class="card-market">${m.market}</div>
         </div>
       </div>
       <div class="card-price">${price.toFixed(2)}</div>
       <div class="card-unit">${m.unit}</div>
-      <div class="card-change ${updown}" style="margin-top:6px">
-        <span>${arrow}</span>
-        <span>${Math.abs(pct).toFixed(2)}%</span>
-      </div>
+      <div class="card-change ${updown}" style="margin-top:6px"><span>${arrow}</span><span>${Math.abs(pct).toFixed(2)}%</span></div>
       <div class="card-name">${m.name}</div>
-      <div class="sparkline-container">
-        <canvas id="spark-${m.id}" height="36"></canvas>
-      </div>
-    `;
+      <div class="sparkline-container"><canvas id="spark-${m.id}" height="36"></canvas></div>`;
     grid.appendChild(card);
   });
-
-  // Draw sparklines
-  MARKETS.forEach(m => {
-    const ctx = document.getElementById(`spark-${m.id}`).getContext('2d');
-    const vals = rawData[m.yKey].slice(-20);
-    new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: vals.map((_, i) => i),
-        datasets: [{
-          data: vals,
-          borderColor: m.color,
-          borderWidth: 1.5,
-          fill: true,
-          backgroundColor: m.color + '18',
-          pointRadius: 0,
-          tension: 0.4
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: { legend: { display: false }, tooltip: { enabled: false } },
-        scales: { x: { display: false }, y: { display: false } },
-        animation: false,
-        elements: { line: { tension: 0.4 } }
-      }
+  MARKETS.forEach(m=>{
+    const ctx=document.getElementById(`spark-${m.id}`).getContext('2d');
+    new Chart(ctx,{
+      type:'line',
+      data:{labels:rawData[m.yKey].values.slice(-20).map((_,i)=>i),datasets:[{data:rawData[m.yKey].values.slice(-20),borderColor:m.color,backgroundColor:m.color+'18',borderWidth:1.5,fill:true,pointRadius:0,tension:.4}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{enabled:false}},scales:{x:{display:false},y:{display:false}},animation:false}
     });
   });
 }
 
-// ============================================================
-// MAIN CHARTS
-// ============================================================
-function buildGasChart(days) {
-  const ctx = document.getElementById('gasChart').getContext('2d');
-  if (charts.gas) charts.gas.destroy();
-  const n = Math.min(days, rawData.henry.length);
-  const slice = getLabels(days);
-  charts.gas = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: slice,
-      datasets: [
-        {
-          label: 'Henry Hub ($/MMBtu)',
-          data: rawData.henry.slice(-n),
-          borderColor: '#4488ff',
-          backgroundColor: 'rgba(68,136,255,0.06)',
-          borderWidth: 1.5,
-          pointRadius: 0,
-          fill: true,
-          tension: 0.3,
-          yAxisID: 'y'
-        },
-        {
-          label: 'TTF (€/MWh)',
-          data: rawData.ttf.slice(-n),
-          borderColor: '#00ff88',
-          backgroundColor: 'transparent',
-          borderWidth: 1.5,
-          pointRadius: 0,
-          tension: 0.3,
-          yAxisID: 'y2'
-        },
-        {
-          label: 'JKM ($/MMBtu)',
-          data: rawData.jkm.slice(-n),
-          borderColor: '#ffcc00',
-          backgroundColor: 'transparent',
-          borderWidth: 1.5,
-          pointRadius: 0,
-          tension: 0.3,
-          yAxisID: 'y'
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      interaction: { mode: 'index', intersect: false },
-      plugins: {
-        legend: { display: true, labels: { boxWidth: 12, padding: 14, color: '#5a7090', font: { size: 10 } } },
-        tooltip: { backgroundColor: '#0f1520', borderColor: '#1e2d45', borderWidth: 1, titleColor: '#c8d8f0', bodyColor: '#c8d8f0', padding: 10 }
-      },
-      scales: {
-        x: { ticks: { maxTicksLimit: 8, maxRotation: 0 }, grid: { color: 'rgba(30,45,69,0.5)' } },
-        y: {
-          grid: { color: 'rgba(30,45,69,0.5)' },
-          ticks: { callback: v => v.toFixed(1), color: '#4488ff' },
-          title: { display: true, text: '$/MMBtu (HH・JKM)', color: '#4488ff', font: { size: 9 } }
-        },
-        y2: {
-          position: 'right',
-          grid: { display: false },
-          ticks: { callback: v => v.toFixed(1), color: '#00ff88' },
-          title: { display: true, text: '€/MWh (TTF)', color: '#00ff88', font: { size: 9 } }
-        }
-      }
-    }
-  });
-}
-
-function buildPowerChart(days) {
-  const ctx = document.getElementById('powerChart').getContext('2d');
-  if (charts.power) charts.power.destroy();
-  const n = Math.min(days, rawData.jepx.length);
-  const slice = getLabels(days);
-  const areaLabel = JEPX_AREAS[jepxArea] ? `JEPX ${JEPX_AREAS[jepxArea].label}` : 'JEPX';
-  charts.power = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: slice,
-      datasets: [
-        {
-          label: areaLabel + ' (円/kWh)',
-          data: rawData.jepx.slice(-n),
-          borderColor: '#cc44ff',
-          backgroundColor: 'rgba(204,68,255,0.06)',
-          borderWidth: 1.5,
-          pointRadius: 0,
-          fill: true,
-          tension: 0.3,
-          yAxisID: 'y2'
-        },
-        {
-          label: 'JKM ($/MMBtu)',
-          data: rawData.jkm.slice(-n),
-          borderColor: '#ffcc00',
-          backgroundColor: 'transparent',
-          borderWidth: 1.5,
-          pointRadius: 0,
-          tension: 0.3,
-          yAxisID: 'y'
-        },
-        {
-          label: 'EEX Power (€/MWh)',
-          data: rawData.eex.slice(-n),
-          borderColor: '#ff8844',
-          backgroundColor: 'transparent',
-          borderWidth: 1.5,
-          pointRadius: 0,
-          tension: 0.3,
-          yAxisID: 'y'
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      interaction: { mode: 'index', intersect: false },
-      plugins: {
-        legend: { display: true, labels: { boxWidth: 12, padding: 14, color: '#5a7090', font: { size: 10 } } },
-        tooltip: { backgroundColor: '#0f1520', borderColor: '#1e2d45', borderWidth: 1, titleColor: '#c8d8f0', bodyColor: '#c8d8f0', padding: 10 }
-      },
-      scales: {
-        x: { ticks: { maxTicksLimit: 8, maxRotation: 0 }, grid: { color: 'rgba(30,45,69,0.5)' } },
-        y: {
-          grid: { color: 'rgba(30,45,69,0.5)' },
-          ticks: { callback: v => v.toFixed(1) },
-          title: { display: true, text: '$/MMBtu・€/MWh (JKM・EEX)', color: '#ffcc00', font: { size: 9 } }
-        },
-        y2: {
-          position: 'right',
-          grid: { display: false },
-          ticks: { callback: v => v.toFixed(1), color: '#cc44ff' },
-          title: { display: true, text: '円/kWh (JEPX)', color: '#cc44ff', font: { size: 9 } }
-        }
-      }
-    }
-  });
-}
-
-async function changeJEPXArea(area) {
-  jepxArea = area;
-  const m = MARKETS.find(m => m.id === 'jepx');
-  if (m) m.name = `JEPX スポット（${JEPX_AREAS[area].label}）`;
-
-  // CSVデータがあればそちらを優先
-  const csvData = getJepxDataForArea(area);
-  if (csvData) {
-    rawData.jepx = csvData;
-    dataSource.jepx = 'csv';
-    buildCards();
-    buildPowerChart(currentRange2);
-    updateSourceTags();
-    return;
-  }
-
-  // CSVなければfetch
-  const btn = document.querySelector('.refresh-btn');
-  btn.textContent = '⟳ FETCHING...';
-  btn.disabled = true;
-  try {
-    const data = await fetchJEPX(area);
-    if (data.length >= 5) {
-      while (data.length < MAX_DAYS) data.unshift(data[0]);
-      rawData.jepx = data.slice(-MAX_DAYS);
-      dataSource.jepx = 'live';
-    }
-  } catch(e) {
-    console.warn('JEPX area fetch failed', e);
-  }
-  btn.textContent = '⟳ REFRESH';
-  btn.disabled = false;
-  buildCards();
-  buildPowerChart(currentRange2);
-  updateSourceTags();
-}
-
-function chartOpts(yId, unit) {
-  return {
-    responsive: true,
-    maintainAspectRatio: false,
-    interaction: { mode: 'index', intersect: false },
-    plugins: {
-      legend: {
-        display: true,
-        labels: { boxWidth: 12, padding: 16, color: '#5a7090', font: { size: 10 } }
-      },
-      tooltip: {
-        backgroundColor: '#0f1520',
-        borderColor: '#1e2d45',
-        borderWidth: 1,
-        titleColor: '#c8d8f0',
-        bodyColor: '#c8d8f0',
-        padding: 10
-      }
-    },
-    scales: {
-      x: {
-        ticks: { maxTicksLimit: 6, maxRotation: 0 },
-        grid: { color: 'rgba(30,45,69,0.5)' }
-      },
-      y: {
-        grid: { color: 'rgba(30,45,69,0.5)' },
-        ticks: { callback: v => v.toFixed(1) }
-      }
-    }
+function buildGasChart(days){
+  const ctx=document.getElementById('gasChart').getContext('2d');
+  if(charts.gas) charts.gas.destroy();
+  const cutoff=new Date(); cutoff.setDate(cutoff.getDate()-days);
+  const cutoffStr=cutoff.toISOString().slice(0,10); // YYYY-MM-DD で統一
+  const allDates=rawData.henry.dates;
+  const startIdx=allDates.findIndex(d=>d>=cutoffStr);
+  const henryDates=startIdx>=0?allDates.slice(startIdx):allDates;
+  const n=henryDates.length;
+  const sliceN=key=>{
+    // henry と同じ日付に対応する値をインデックスで取得
+    const kDates=rawData[key].dates;
+    const kVals=rawData[key].values;
+    return henryDates.map(d=>{
+      const i=kDates.indexOf(d);
+      return i>=0?kVals[i]:null;
+    });
   };
-}
-
-function setRange(days, btn) {
-  currentRange1 = days;
-  document.querySelectorAll('#gasRangeControls .range-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  buildGasChart(days);
-}
-
-function setRange2(days, btn) {
-  currentRange2 = days;
-  document.querySelectorAll('#powerRangeControls .range-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  buildPowerChart(days);
-}
-
-// ============================================================
-// CORRELATION
-// ============================================================
-function pearson(a, b) {
-  const n = a.length;
-  const meanA = a.reduce((s, v) => s + v, 0) / n;
-  const meanB = b.reduce((s, v) => s + v, 0) / n;
-  let num = 0, da = 0, db = 0;
-  for (let i = 0; i < n; i++) {
-    num += (a[i] - meanA) * (b[i] - meanB);
-    da += (a[i] - meanA) ** 2;
-    db += (b[i] - meanB) ** 2;
+  // 表示データから軸範囲を動的計算
+  const hhVals  = sliceN('henry').filter(v=>v!=null);
+  const ttfVals = sliceN('ttf').filter(v=>v!=null);
+  const jkmVals2= sliceN('jkm').filter(v=>v!=null);
+  const wtiVals = sliceN('wti').filter(v=>v!=null);
+  function gasAxisRange(vals, pad=0.08){
+    if(!vals.length) return {};
+    const mn=Math.min(...vals), mx=Math.max(...vals);
+    const margin=(mx-mn)*pad||mx*pad||1;
+    return {min: Math.max(0, mn-margin), max: mx+margin};
   }
-  return num / Math.sqrt(da * db);
+  const yRange3  = gasAxisRange([...hhVals, ...jkmVals2]);
+  const y2Range3 = gasAxisRange(ttfVals);
+  const y3Range3 = gasAxisRange(wtiVals);
+
+  charts.gas=new Chart(ctx,{
+    type:'line',
+    data:{labels:henryDates,datasets:[
+      {label:'Henry Hub ($/MMBtu)',data:sliceN('henry'),borderColor:'#4488ff',backgroundColor:'rgba(68,136,255,.06)',borderWidth:1.5,pointRadius:0,fill:true,tension:.3,yAxisID:'y',spanGaps:true},
+      {label:'TTF (€/MWh)',       data:sliceN('ttf'),  borderColor:'#00ff88',backgroundColor:'transparent',borderWidth:1.5,pointRadius:0,tension:.3,yAxisID:'y2',spanGaps:true},
+      {label:'JKM ($/MMBtu)',     data:sliceN('jkm'),  borderColor:'#ffcc00',backgroundColor:'transparent',borderWidth:1.5,pointRadius:0,tension:.3,yAxisID:'y',spanGaps:true},
+      {label:'WTI ($/bbl)',       data:sliceN('wti'),  borderColor:'#ff2255',backgroundColor:'transparent',borderWidth:1.5,pointRadius:0,tension:.3,yAxisID:'y3',spanGaps:true}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{display:true,labels:{boxWidth:12,padding:14,color:'#5a7090',font:{size:10}}},tooltip:{backgroundColor:'#0f1520',borderColor:'#1e2d45',borderWidth:1,titleColor:'#c8d8f0',bodyColor:'#c8d8f0',padding:10}},
+      scales:{x:{ticks:{maxTicksLimit:8,maxRotation:0},grid:{color:'rgba(30,45,69,.5)'}},
+        y:{...yRange3,  grid:{color:'rgba(30,45,69,.5)'},ticks:{callback:v=>v.toFixed(1),color:'#4488ff'},title:{display:true,text:'$/MMBtu (HH・JKM)',color:'#4488ff',font:{size:9}}},
+        y2:{...y2Range3,position:'right',grid:{display:false},ticks:{callback:v=>v.toFixed(1),color:'#00ff88'},title:{display:true,text:'€/MWh (TTF)',color:'#00ff88',font:{size:9}}},
+        y3:{...y3Range3,position:'right',grid:{display:false},ticks:{callback:v=>v.toFixed(0),color:'#ff2255'},title:{display:true,text:'$/bbl (WTI)',color:'#ff2255',font:{size:9}}}}}
+  });
 }
 
-function corrColor(r) {
-  if (r >= 0.8) return '#00ff88';
-  if (r >= 0.5) return '#4af0a8';
-  if (r >= 0.2) return '#aaaaaa';
-  if (r >= -0.2) return '#666666';
-  if (r >= -0.5) return '#ff9966';
+function buildPowerChart(days){
+  const ctx=document.getElementById('powerChart').getContext('2d');
+  if(charts.power) charts.power.destroy();
+  const cutoff=new Date(); cutoff.setDate(cutoff.getDate()-days);
+  const cutoffStr=cutoff.toISOString().slice(0,10); // YYYY-MM-DD で統一
+  const allDates=rawData.jepx.dates;
+  const startIdx=allDates.findIndex(d=>d>=cutoffStr);
+  const jepxDates=startIdx>=0?allDates.slice(startIdx):allDates;
+  const sliceN=key=>{
+    const kDates=rawData[key].dates;
+    const kVals=rawData[key].values;
+    return jepxDates.map(d=>{
+      const i=kDates.indexOf(d);
+      return i>=0?kVals[i]:null;
+    });
+  };
+  const areaLabel=JEPX_AREAS[jepxArea]?`JEPX ${JEPX_AREAS[jepxArea].label}`:'JEPX';
+
+  // 表示データから軸範囲を動的計算
+  const jepxVals = sliceN('jepx').filter(v=>v!=null);
+  const jkmVals  = sliceN('jkm').filter(v=>v!=null);
+  const eexVals  = sliceN('eex').filter(v=>v!=null);
+  const yVals  = [...jkmVals, ...eexVals];
+  const y2Vals = jepxVals;
+  function axisRange(vals, pad=0.1){
+    if(!vals.length) return {};
+    const mn=Math.min(...vals), mx=Math.max(...vals);
+    const margin=(mx-mn)*pad||mx*pad||1;
+    return {min: Math.max(0, mn-margin), max: mx+margin};
+  }
+  const yRange  = axisRange(yVals);
+  const y2Range = axisRange(y2Vals);
+
+  charts.power=new Chart(ctx,{
+    type:'line',
+    data:{labels:jepxDates,datasets:[
+      {label:areaLabel+' (円/kWh)',data:sliceN('jepx'),borderColor:'#cc44ff',backgroundColor:'rgba(204,68,255,.06)',borderWidth:1.5,pointRadius:0,fill:true,tension:.3,yAxisID:'y2',spanGaps:true},
+      {label:'JKM ($/MMBtu)',     data:sliceN('jkm'), borderColor:'#ffcc00',backgroundColor:'transparent',borderWidth:1.5,pointRadius:0,tension:.3,yAxisID:'y',spanGaps:true},
+      {label:'EEX Power (€/MWh)',data:sliceN('eex'), borderColor:'#ff8844',backgroundColor:'transparent',borderWidth:1.5,pointRadius:0,tension:.3,yAxisID:'y',spanGaps:true}
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{display:true,labels:{boxWidth:12,padding:14,color:'#5a7090',font:{size:10}}},tooltip:{backgroundColor:'#0f1520',borderColor:'#1e2d45',borderWidth:1,titleColor:'#c8d8f0',bodyColor:'#c8d8f0',padding:10}},
+      scales:{x:{ticks:{maxTicksLimit:8,maxRotation:0},grid:{color:'rgba(30,45,69,.5)'}},
+        y:{...yRange,  grid:{color:'rgba(30,45,69,.5)'},ticks:{callback:v=>v.toFixed(1)},           title:{display:true,text:'$/MMBtu・€/MWh',color:'#ffcc00',font:{size:9}}},
+        y2:{...y2Range,position:'right',grid:{display:false},ticks:{callback:v=>v.toFixed(1),color:'#cc44ff'},title:{display:true,text:'円/kWh (JEPX)',color:'#cc44ff',font:{size:9}}}}}
+  });
+}
+
+async function changeJEPXArea(area){
+  jepxArea=area;
+  const m=MARKETS.find(m=>m.id==='jepx');
+  if(m) m.name=`JEPX スポット（${JEPX_AREAS[area].label}）`;
+  const csvData=getJepxDataForArea(area);
+  if(csvData){
+    rawData.jepx=csvData; dataSource.jepx='csv';
+    buildCards(); buildPowerChart(currentRange2); updateSourceTags();
+  } else {
+    showNotif(`⚠ ${JEPX_AREAS[area].label}のCSVデータがありません`);
+  }
+}
+
+function setRange(days,btn){
+  currentRange1=days;
+  document.querySelectorAll('#gasRangeControls .range-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  buildGasChart(days); buildRelativeCharts();
+}
+function setRange2(days,btn){
+  currentRange2=days;
+  document.querySelectorAll('#powerRangeControls .range-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  buildPowerChart(days); buildRelativeCharts();
+}
+
+function initBaseDate(){
+  const d=new Date(); d.setFullYear(d.getFullYear()-1);
+  const iso=d.toISOString().slice(0,10);
+  document.getElementById('baseDateGas').value=iso;
+  document.getElementById('baseDatePower').value=iso;
+}
+function setBaseToRangeStart(chart){
+  if(chart==='gas'){
+    const d=new Date(); d.setDate(d.getDate()-currentRange1);
+    document.getElementById('baseDateGas').value=d.toISOString().slice(0,10);
+  } else {
+    const d=new Date(); d.setDate(d.getDate()-currentRange2);
+    document.getElementById('baseDatePower').value=d.toISOString().slice(0,10);
+  }
+  buildRelativeCharts();
+}
+function normalizeToBase(dates,values,baseDate){
+  const baseDateStr=baseDate; // YYYY-MM-DD のまま使用
+  let baseIdx=-1,minDiff=Infinity;
+  for(let i=0;i<dates.length;i++){
+    const diff=Math.abs(new Date(dates[i])-new Date(baseDateStr));
+    if(diff<minDiff){minDiff=diff;baseIdx=i;}
+  }
+  if(baseIdx===-1||values[baseIdx]==null) return null;
+  const bv=values[baseIdx];
+  if(!bv) return null;
+  return values.map(v=>v==null?null:parseFloat((v/bv*100).toFixed(2)));
+}
+function buildRelativeCharts(){
+  const baseDateGas  =document.getElementById('baseDateGas')?.value;
+  const baseDatePower=document.getElementById('baseDatePower')?.value;
+
+  // ── Gas & LNG ────────────────────────────────────────────────
+  if(baseDateGas){
+    const cutoff1=new Date(); cutoff1.setDate(cutoff1.getDate()-currentRange1);
+    const cs1=cutoff1.toISOString().slice(0,10);
+    const gi=rawData.henry.dates.findIndex(d=>d>=cs1);
+    const henryDates=gi>=0?rawData.henry.dates.slice(gi):rawData.henry.dates;
+    const gasSlice=key=>{
+      const kDates=rawData[key].dates; const kVals=rawData[key].values;
+      return henryDates.map(d=>{ const i=kDates.indexOf(d); return i>=0?kVals[i]:null; });
+    };
+    const gasDs=[{key:'henry',label:'Henry Hub',color:'#4488ff'},{key:'ttf',label:'TTF',color:'#00ff88'},{key:'jkm',label:'JKM',color:'#ffcc00'},{key:'wti',label:'WTI',color:'#ff2255'}]
+      .map(d=>{const vals=gasSlice(d.key);const norm=normalizeToBase(henryDates,vals,baseDateGas);return norm?{label:d.label,data:norm,borderColor:d.color,backgroundColor:'transparent',borderWidth:1.5,pointRadius:0,tension:.3,spanGaps:true}:null;}).filter(Boolean);
+    const ctx1=document.getElementById('gasRelChart').getContext('2d');
+    if(charts.gasRel) charts.gasRel.destroy();
+    charts.gasRel=new Chart(ctx1,{type:'line',data:{labels:henryDates,datasets:gasDs},options:relChartOpts(baseDateGas)});
+  }
+
+  // ── Power Markets ─────────────────────────────────────────────
+  if(baseDatePower){
+    const cutoff2=new Date(); cutoff2.setDate(cutoff2.getDate()-currentRange2);
+    const cs2=cutoff2.toISOString().slice(0,10);
+    const pi=rawData.jepx.dates.findIndex(d=>d>=cs2);
+    const jepxDates=pi>=0?rawData.jepx.dates.slice(pi):rawData.jepx.dates;
+    const powerSlice=key=>{
+      const kDates=rawData[key].dates; const kVals=rawData[key].values;
+      return jepxDates.map(d=>{ const i=kDates.indexOf(d); return i>=0?kVals[i]:null; });
+    };
+    const areaLabel=JEPX_AREAS[jepxArea]?`JEPX ${JEPX_AREAS[jepxArea].label}`:'JEPX';
+    const powerDs=[{key:'jepx',label:areaLabel,color:'#cc44ff'},{key:'jkm',label:'JKM',color:'#ffcc00'},{key:'eex',label:'EEX',color:'#ff8844'}]
+      .map(d=>{const vals=powerSlice(d.key);const norm=normalizeToBase(jepxDates,vals,baseDatePower);return norm?{label:d.label,data:norm,borderColor:d.color,backgroundColor:'transparent',borderWidth:1.5,pointRadius:0,tension:.3,spanGaps:true}:null;}).filter(Boolean);
+    const ctx2=document.getElementById('powerRelChart').getContext('2d');
+    if(charts.powerRel) charts.powerRel.destroy();
+    charts.powerRel=new Chart(ctx2,{type:'line',data:{labels:jepxDates,datasets:powerDs},options:relChartOpts(baseDatePower)});
+  }
+}
+function relChartOpts(baseDate){
+  return{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+    plugins:{legend:{display:true,labels:{boxWidth:12,padding:14,color:'#5a7090',font:{size:10}}},tooltip:{backgroundColor:'#0f1520',borderColor:'#1e2d45',borderWidth:1,titleColor:'#c8d8f0',bodyColor:'#c8d8f0',padding:10}},
+    scales:{x:{ticks:{maxTicksLimit:8,maxRotation:0},grid:{color:'rgba(30,45,69,.5)'}},y:{grid:{color:'rgba(30,45,69,.5)'},ticks:{callback:v=>v.toFixed(0)},title:{display:true,text:`Index (${baseDate}=100)`,color:'#5a7090',font:{size:9}}}}};
+}
+
+// ════════════════════════════════════════════════════════════════
+// DAILY CORRELATION
+// ════════════════════════════════════════════════════════════════
+function pearson(a,b){
+  const n=Math.min(a.length,b.length);
+  if(n<3) return NaN;
+  const ma=a.slice(0,n).reduce((s,v)=>s+v,0)/n;
+  const mb=b.slice(0,n).reduce((s,v)=>s+v,0)/n;
+  let num=0,da=0,db=0;
+  for(let i=0;i<n;i++){num+=(a[i]-ma)*(b[i]-mb);da+=(a[i]-ma)**2;db+=(b[i]-mb)**2;}
+  return da&&db?num/Math.sqrt(da*db):NaN;
+}
+function corrColor(r){
+  if(r>=.8) return '#00ff88';
+  if(r>=.5) return '#4af0a8';
+  if(r>=.2) return '#aaaaaa';
+  if(r>=-.2) return '#666666';
+  if(r>=-.5) return '#ff9966';
   return '#ff4466';
 }
-
-function updateCorrelation() {
-  const window = parseInt(document.getElementById('corrWindow').value);
-  const keys = ['henry', 'ttf', 'jkm', 'eex', 'jepx'];
-  const names = ['HH', 'TTF', 'JKM', 'EEX', 'JEPX'];
-  const slices = keys.map(k => rawData[k].slice(-window));
-
-  // Matrix
-  let html = `<table class="matrix-table"><thead><tr><th></th>`;
-  names.forEach(n => html += `<th>${n}</th>`);
-  html += `</tr></thead><tbody>`;
-  keys.forEach((k, i) => {
-    html += `<tr><td>${names[i]}</td>`;
-    keys.forEach((k2, j) => {
-      if (i === j) {
-        html += `<td style="color:var(--text-dim)">—</td>`;
-      } else {
-        const r = pearson(slices[i], slices[j]);
-        html += `<td style="color:${corrColor(r)}; font-weight:500">${r.toFixed(3)}</td>`;
-      }
+function updateCorrelation(){
+  const win=parseInt(document.getElementById('corrWindow').value);
+  const keys=['henry','ttf','jkm','eex','jepx','wti'];
+  const names=['HH','TTF','JKM','EEX','JEPX','WTI'];
+  const slices=keys.map(k=>rawData[k].values.slice(-win));
+  let html=`<table class="matrix-table"><thead><tr><th></th>`;
+  names.forEach(n=>html+=`<th>${n}</th>`);
+  html+=`</tr></thead><tbody>`;
+  keys.forEach((k,i)=>{
+    html+=`<tr><td>${names[i]}</td>`;
+    keys.forEach((_,j)=>{
+      if(i===j){html+=`<td style="color:var(--text-dim)">—</td>`;}
+      else{const r=pearson(slices[i],slices[j]);html+=`<td style="color:${corrColor(r)};font-weight:500">${r.toFixed(3)}</td>`;}
     });
-    html += `</tr>`;
+    html+=`</tr>`;
   });
-  html += `</tbody></table>`;
-  document.getElementById('corrMatrixContainer').innerHTML = html;
+  html+=`</tbody></table>`;
+  document.getElementById('corrMatrixContainer').innerHTML=html;
+  updateScatter(); updateRolling();
+}
+function updateScatter(){
+  const xi=parseInt(document.getElementById('scatterX').value);
+  const yi=parseInt(document.getElementById('scatterY').value);
+  const keys=['henry','ttf','jkm','eex','jepx','wti'];
+  const names=['Henry Hub','TTF','JKM','EEX Power','JEPX','WTI'];
+  const win=parseInt(document.getElementById('corrWindow').value);
+  const xData=rawData[keys[xi]].values.slice(-win);
+  const yData=rawData[keys[yi]].values.slice(-win);
+  const colors=['#4488ff','#00ff88','#ffcc00','#ff8844','#cc44ff','#ff2255'];
+  const ctx=document.getElementById('scatterChart').getContext('2d');
+  if(charts.scatter) charts.scatter.destroy();
+  charts.scatter=new Chart(ctx,{
+    type:'scatter',
+    data:{datasets:[{data:xData.map((v,i)=>({x:v,y:yData[i]})),backgroundColor:colors[xi]+'80',borderColor:colors[xi],borderWidth:1,pointRadius:3}]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{backgroundColor:'#0f1520',borderColor:'#1e2d45',borderWidth:1,callbacks:{label:ctx=>`(${ctx.parsed.x.toFixed(2)},${ctx.parsed.y.toFixed(2)})`}}},
+      scales:{x:{title:{display:true,text:names[xi],color:'#5a7090',font:{size:10}},grid:{color:'rgba(30,45,69,.5)'}},y:{title:{display:true,text:names[yi],color:'#5a7090',font:{size:10}},grid:{color:'rgba(30,45,69,.5)'}}}}
+  });
+}
+const ROLLING_WIN=30;
+function updateRolling(){
+  const xi=parseInt(document.getElementById('scatterX').value);
+  const yi=parseInt(document.getElementById('scatterY').value);
+  const keys=['henry','ttf','jkm','eex','jepx','wti'];
+  const names=['Henry Hub','TTF','JKM','EEX Power','JEPX','WTI'];
+  const colors=['#4488ff','#00ff88','#ffcc00','#ff8844','#cc44ff','#ff2255'];
+  const xData=rawData[keys[xi]].values;
+  const yData=rawData[keys[yi]].values;
+  const xDates=rawData[keys[xi]].dates;
+  const rollingCorr=[],rollLabels=[];
+  for(let i=ROLLING_WIN;i<=xData.length;i++){
+    rollingCorr.push(pearson(xData.slice(i-ROLLING_WIN,i),yData.slice(i-ROLLING_WIN,i)));
+    rollLabels.push(xDates[i-1]||'');
+  }
+  // タイトルを選択ペアに合わせて更新
+  const titleEl=document.querySelector('.rolling-wrap .matrix-title');
+  if(titleEl) titleEl.textContent=`Rolling ${ROLLING_WIN}-Day Correlation — ${names[xi]} vs ${names[yi]}`;
 
-  updateScatter();
-  updateRolling();
+  const ctx=document.getElementById('rollingChart').getContext('2d');
+  if(charts.rolling) charts.rolling.destroy();
+  charts.rolling=new Chart(ctx,{
+    type:'line',
+    data:{labels:rollLabels,datasets:[{
+      data:rollingCorr,
+      borderColor:colors[xi],
+      backgroundColor:colors[xi]+'18',
+      borderWidth:1.5,fill:true,pointRadius:0,tension:.3
+    }]},
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+      scales:{x:{ticks:{maxTicksLimit:8},grid:{color:'rgba(30,45,69,.5)'}},y:{min:-1,max:1,grid:{color:'rgba(30,45,69,.5)'},ticks:{callback:v=>v.toFixed(1)}}}}
+  });
 }
 
-function updateScatter() {
-  const xi = parseInt(document.getElementById('scatterX').value);
-  const yi = parseInt(document.getElementById('scatterY').value);
-  const keys = ['henry', 'ttf', 'jkm', 'eex', 'jepx'];
-  const names = ['Henry Hub', 'TTF', 'JKM', 'EEX Power', 'JEPX'];
-  const window = parseInt(document.getElementById('corrWindow').value);
-  const xData = rawData[keys[xi]].slice(-window);
-  const yData = rawData[keys[yi]].slice(-window);
-  const colors = ['#4488ff', '#00ff88', '#ffcc00', '#ff8844', '#cc44ff'];
+// ════════════════════════════════════════════════════════════════
+// MONTHLY DATA ENGINE
+// ════════════════════════════════════════════════════════════════
+const JCC_TO_MMBTU = 1/5.8; // $/bbl ÷ 5.8 = $/MMBtu
+const M_COLORS = { jlc:'#00d4ff', jcc:'#ff6b35', jkm:'#7fff6b', hh:'#ffcc00' };
+let mData = null; // { jlc:[], jcc:[], jkm:[], hh:[], dates:[] }
+let mCharts = {};
+let mDataLoaded = false;
 
-  const ctx = document.getElementById('scatterChart').getContext('2d');
-  if (charts.scatter) charts.scatter.destroy();
+// ── Monthly: CSVから構築済みのデータを表示するのみ ────────────
 
-  charts.scatter = new Chart(ctx, {
-    type: 'scatter',
-    data: {
-      datasets: [{
-        data: xData.map((v, i) => ({ x: v, y: yData[i] })),
-        backgroundColor: colors[xi] + '80',
-        borderColor: colors[xi],
-        borderWidth: 1,
-        pointRadius: 3
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          backgroundColor: '#0f1520',
-          borderColor: '#1e2d45',
-          borderWidth: 1,
-          callbacks: {
-            label: ctx => `(${ctx.parsed.x.toFixed(2)}, ${ctx.parsed.y.toFixed(2)})`
-          }
-        }
-      },
-      scales: {
-        x: {
-          title: { display: true, text: names[xi], color: '#5a7090', font: { size: 10 } },
-          grid: { color: 'rgba(30,45,69,0.5)' }
-        },
-        y: {
-          title: { display: true, text: names[yi], color: '#5a7090', font: { size: 10 } },
-          grid: { color: 'rgba(30,45,69,0.5)' }
-        }
+function setMStatus(state,msg){
+  document.getElementById('mStatusDot').className='m-status-dot '+state;
+  document.getElementById('mStatusText').textContent=msg;
+}
+
+function renderMonthly(){
+  if(!mDataLoaded) return;
+  const n = parseInt(document.getElementById('mRangeSelect').value);
+  const d = {
+    dates: mData.dates.slice(-n),
+    jlc:   mData.jlc.slice(-n),
+    jcc:   mData.jcc.slice(-n),
+    jkm:   mData.jkm.slice(-n),
+    hh:    mData.hh.slice(-n),
+  };
+  const jccConv = d.jcc.map(v=>+(v*JCC_TO_MMBTU).toFixed(3));
+
+  updateMKPIs(d);
+  drawMTimeseries(d, jccConv);
+  drawMCorrMatrix(d, jccConv);
+  drawMRollingCorr(d, jccConv);
+  drawMScatter('mScatter1', d.jlc, jccConv,  'JLC ($/MMBtu)', 'JCC÷5.8 ($/MMBtu)', M_COLORS.jcc);
+  drawMScatter('mScatter2', d.jlc, d.jkm,    'JLC ($/MMBtu)', 'JKM ($/MMBtu)',      M_COLORS.jkm);
+  drawMScatter('mScatter3', d.jlc, d.hh,     'JLC ($/MMBtu)', 'HH ($/MMBtu)',       M_COLORS.hh);
+}
+
+function updateMKPIs(d){
+  function set(vidId,chgId,arr,fmt){
+    if(!arr||!arr.length) return;
+    const last=arr[arr.length-1], prev=arr.length>1?arr[arr.length-2]:null;
+    document.getElementById(vidId).textContent=fmt(last);
+    if(prev!==null){
+      const chg=last-prev,pct=(chg/prev*100).toFixed(1);
+      const el=document.getElementById(chgId);
+      el.textContent=(chg>=0?'▲':'▼')+' '+Math.abs(chg).toFixed(2)+' ('+pct+'%)';
+      el.className='mkpi-chg '+(chg>=0?'up':'down');
+    }
+  }
+  set('mkpiJlc','mkpiJlcChg', d.jlc, v=>'$'+v.toFixed(2));
+  set('mkpiJcc','mkpiJccChg', d.jcc, v=>'$'+v.toFixed(1));
+  set('mkpiJkm','mkpiJkmChg', d.jkm, v=>'$'+v.toFixed(2));
+  set('mkpiHh', 'mkpiHhChg',  d.hh,  v=>'$'+v.toFixed(2));
+}
+
+function drawMTimeseries(d, jccConv){
+  if(mCharts.ts) mCharts.ts.destroy();
+  const ctx=document.getElementById('mTimeseriesChart').getContext('2d');
+  mCharts.ts=new Chart(ctx,{
+    type:'line',
+    data:{labels:d.dates,datasets:[
+      {label:'JLC',     data:d.jlc,   borderColor:M_COLORS.jlc,backgroundColor:'transparent',borderWidth:2,pointRadius:2,tension:.3},
+      {label:'JCC÷5.8', data:jccConv, borderColor:M_COLORS.jcc,backgroundColor:'transparent',borderWidth:2,pointRadius:2,tension:.3,borderDash:[5,3]},
+      {label:'JKM',     data:d.jkm,   borderColor:M_COLORS.jkm,backgroundColor:'transparent',borderWidth:2,pointRadius:2,tension:.3},
+      {label:'HH',      data:d.hh,    borderColor:M_COLORS.hh, backgroundColor:'transparent',borderWidth:1.5,pointRadius:2,tension:.3,borderDash:[3,3]},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},
+      plugins:{legend:{labels:{color:'#8899aa',boxWidth:12,padding:14,font:{size:10}}},tooltip:{backgroundColor:'#0f1520',borderColor:'#1e2d45',borderWidth:1,titleColor:'#c8d8f0',bodyColor:'#c8d8f0',padding:10}},
+      scales:{x:{ticks:{color:'#4a5568',font:{size:10},maxTicksLimit:12},grid:{color:'rgba(30,45,69,.5)'}},
+        y:{ticks:{color:'#4a5568',font:{size:10},callback:v=>'$'+v.toFixed(1)},grid:{color:'rgba(30,45,69,.5)'},title:{display:true,text:'$/MMBtu',color:'#4a5568',font:{size:9}}}}}
+  });
+}
+
+function drawMCorrMatrix(d, jccConv){
+  const labels=['JLC','JCC','JKM','HH'];
+  const vals=[d.jlc, jccConv, d.jkm, d.hh];
+  const n=4;
+  let html=`<div style="display:grid;grid-template-columns:60px repeat(4,1fr);gap:2px;width:100%">`;
+  html+=`<div></div>`;
+  labels.forEach(l=>html+=`<div class="m-corr-cell-hdr">${l}</div>`);
+  for(let i=0;i<n;i++){
+    html+=`<div class="m-corr-row-lbl">${labels[i]}</div>`;
+    for(let j=0;j<n;j++){
+      if(i===j){html+=`<div class="m-corr-val" style="color:var(--text-dim);background:rgba(255,255,255,.04)">—</div>`;}
+      else{
+        const rv=pearson(vals[i],vals[j]);
+        const r=isNaN(rv)?'—':rv.toFixed(2);
+        const abs=isNaN(rv)?0:Math.abs(rv);
+        const alpha=0.05+abs*.5;
+        const hue=rv>0?'200':'20';
+        const bg=`hsla(${hue},80%,55%,${alpha})`;
+        const col=mCorrColor(rv);
+        html+=`<div class="m-corr-val" style="color:${col};background:${bg}">${r}</div>`;
       }
     }
+  }
+  html+=`</div>`;
+  document.getElementById('mCorrMatrix').innerHTML=html;
+}
+function mCorrColor(r){
+  if(isNaN(r)) return '#4a5568';
+  const a=Math.abs(r);
+  if(a>.85) return r>0?'#00d4ff':'#ff6b35';
+  if(a>.65) return r>0?'#7fbfff':'#ff9966';
+  if(a>.40) return '#9aa5b1';
+  return '#4a5568';
+}
+
+function drawMRollingCorr(d, jccConv){
+  const W=12, n=d.dates.length;
+  if(n<W+1) return;
+  const rollJcc=[],rollJkm=[],rollHh=[],rollDates=[];
+  for(let i=W-1;i<n;i++){
+    const s=arr=>arr.slice(i-W+1,i+1);
+    rollJcc.push(pearson(s(d.jlc),s(jccConv)));
+    rollJkm.push(pearson(s(d.jlc),s(d.jkm)));
+    rollHh.push( pearson(s(d.jlc),s(d.hh)));
+    rollDates.push(d.dates[i]);
+  }
+  if(mCharts.rc) mCharts.rc.destroy();
+  const ctx=document.getElementById('mRollingChart').getContext('2d');
+  mCharts.rc=new Chart(ctx,{
+    type:'line',
+    data:{labels:rollDates,datasets:[
+      {label:'vs JCC',data:rollJcc,borderColor:M_COLORS.jcc,borderWidth:2,pointRadius:0,tension:.3},
+      {label:'vs JKM',data:rollJkm,borderColor:M_COLORS.jkm,borderWidth:2,pointRadius:0,tension:.3},
+      {label:'vs HH', data:rollHh, borderColor:M_COLORS.hh, borderWidth:1.5,pointRadius:0,tension:.3,borderDash:[4,3]},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{color:'#8899aa',boxWidth:10,padding:10,font:{size:10}}}},
+      scales:{x:{ticks:{color:'#4a5568',font:{size:10},maxTicksLimit:8},grid:{color:'rgba(30,45,69,.5)'}},
+        y:{min:-1,max:1,ticks:{color:'#4a5568',font:{size:10},callback:v=>v.toFixed(1)},grid:{color:'rgba(30,45,69,.5)'},title:{display:true,text:'Pearson R',color:'#4a5568',font:{size:9}}}}}
   });
 }
 
-function updateRolling() {
-  const xi = parseInt(document.getElementById('scatterX').value);
-  const yi = parseInt(document.getElementById('scatterY').value);
-  const keys = ['henry', 'ttf', 'jkm', 'eex', 'jepx'];
-  const xData = rawData[keys[xi]];
-  const yData = rawData[keys[yi]];
-  const rollingCorr = [];
-  const rollLabels = [];
-
-  for (let i = win; i <= xData.length; i++) {
-    rollingCorr.push(pearson(xData.slice(i - win, i), yData.slice(i - win, i)));
-    rollLabels.push(labels90[i - 1]);
-  }
-
-  const ctx = document.getElementById('rollingChart').getContext('2d');
-  if (charts.rolling) charts.rolling.destroy();
-
-  charts.rolling = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: rollLabels,
-      datasets: [{
-        data: rollingCorr,
-        borderColor: '#4488ff',
-        backgroundColor: 'rgba(68,136,255,0.08)',
-        borderWidth: 1.5,
-        fill: true,
-        pointRadius: 0,
-        tension: 0.3
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { ticks: { maxTicksLimit: 8 }, grid: { color: 'rgba(30,45,69,0.5)' } },
-        y: {
-          min: -1, max: 1,
-          grid: { color: 'rgba(30,45,69,0.5)' },
-          ticks: { callback: v => v.toFixed(1) }
-        }
-      }
-    }
+function drawMScatter(canvasId, xArr, yArr, xLabel, yLabel, color){
+  if(mCharts[canvasId]) mCharts[canvasId].destroy();
+  const ctx=document.getElementById(canvasId).getContext('2d');
+  const n=Math.min(xArr.length,yArr.length);
+  const pts=Array.from({length:n},(_,i)=>({x:xArr[i],y:yArr[i]}));
+  const r=pearson(xArr.slice(0,n),yArr.slice(0,n));
+  mCharts[canvasId]=new Chart(ctx,{
+    type:'scatter',
+    data:{datasets:[{
+      label:`R=${isNaN(r)?'—':r.toFixed(3)}`,
+      data:pts,backgroundColor:color+'55',borderColor:color,borderWidth:1,pointRadius:3
+    }]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{color:'#8899aa',font:{size:10}}},tooltip:{backgroundColor:'#0f1520',borderColor:'#1e2d45',borderWidth:1,titleColor:'#c8d8f0',bodyColor:'#c8d8f0',padding:8,callbacks:{label:c=>`(${c.parsed.x.toFixed(2)},${c.parsed.y.toFixed(2)})`}}},
+      scales:{x:{title:{display:true,text:xLabel,color:'#4a5568',font:{size:9}},ticks:{color:'#4a5568',font:{size:10}},grid:{color:'rgba(30,45,69,.5)'}},
+        y:{title:{display:true,text:yLabel,color:'#4a5568',font:{size:9}},ticks:{color:'#4a5568',font:{size:10}},grid:{color:'rgba(30,45,69,.5)'}}}}
   });
 }
 
-// ============================================================
-// ALERTS — localStorage persistent
-// ============================================================
-const ALERTS_KEY = 'energy_monitor_alerts';
-
-function loadAlerts() {
-  try {
-    const saved = localStorage.getItem(ALERTS_KEY);
-    return saved ? JSON.parse(saved) : [];
-  } catch { return []; }
+// ════════════════════════════════════════════════════════════════
+// ALERTS
+// ════════════════════════════════════════════════════════════════
+const ALERTS_KEY='energy_monitor_alerts';
+function loadAlerts(){try{const s=localStorage.getItem(ALERTS_KEY);return s?JSON.parse(s):[]}catch{return [];}}
+function saveAlerts(){try{localStorage.setItem(ALERTS_KEY,JSON.stringify(alerts));}catch{}}
+let alerts=loadAlerts();
+function addAlert(){
+  const market=document.getElementById('alertMarket').value;
+  const dir=document.getElementById('alertDir').value;
+  const price=parseFloat(document.getElementById('alertPrice').value);
+  if(isNaN(price)){showNotif('⚠ Price value required');return;}
+  const keyMap={'Henry Hub':'henry','TTF':'ttf','JKM (est.)':'jkm','EEX Power':'eex'};
+  alerts.push({id:Date.now(),market,dir,price,key:keyMap[market],triggered:false});
+  document.getElementById('alertPrice').value='';
+  saveAlerts(); renderAlerts(); checkAlerts();
 }
-
-function saveAlerts() {
-  try { localStorage.setItem(ALERTS_KEY, JSON.stringify(alerts)); } catch {}
-}
-
-let alerts = loadAlerts();
-
-function addAlert() {
-  const market = document.getElementById('alertMarket').value;
-  const dir = document.getElementById('alertDir').value;
-  const price = parseFloat(document.getElementById('alertPrice').value);
-
-  if (isNaN(price)) {
-    showNotif('⚠ Price value required');
-    return;
-  }
-
-  const keyMap = { 'Henry Hub': 'henry', 'TTF': 'ttf', 'JKM (est.)': 'jkm', 'EEX Power': 'eex' };
-  alerts.push({ id: Date.now(), market, dir, price, key: keyMap[market], triggered: false });
-  document.getElementById('alertPrice').value = '';
-  saveAlerts();
-  renderAlerts();
-  checkAlerts();
-}
-
-function removeAlert(id) {
-  alerts = alerts.filter(a => a.id !== id);
-  saveAlerts();
-  renderAlerts();
-}
-
-function renderAlerts() {
-  const list = document.getElementById('alertsList');
-  if (alerts.length === 0) {
-    list.innerHTML = '<div style="font-size:12px; color:var(--text-dim); padding: 12px 0;">No alerts set.</div>';
-    document.getElementById('alertBadge').textContent = '';
-    return;
-  }
-
-  const active = alerts.filter(a => !a.triggered).length;
-  document.getElementById('alertBadge').textContent = active > 0 ? ` (${active})` : '';
-
-  list.innerHTML = alerts.map(a => `
+function removeAlert(id){alerts=alerts.filter(a=>a.id!==id);saveAlerts();renderAlerts();}
+function renderAlerts(){
+  const list=document.getElementById('alertsList');
+  if(!alerts.length){list.innerHTML='<div style="font-size:12px;color:var(--text-dim);padding:12px 0">No alerts set.</div>';document.getElementById('alertBadge').textContent='';return;}
+  const active=alerts.filter(a=>!a.triggered).length;
+  document.getElementById('alertBadge').textContent=active>0?` (${active})`:'';
+  list.innerHTML=alerts.map(a=>`
     <div class="alert-item">
       <span class="alert-badge ${a.dir}">${a.dir.toUpperCase()}</span>
-      <span style="color:var(--text-bright); font-size:12px">${a.market}</span>
-      <span style="color:var(--text-dim)">${a.dir === 'above' ? '>' : '<'} ${a.price.toFixed(2)}</span>
-      ${a.triggered ? '<span class="alert-triggered">⚡ TRIGGERED</span>' : ''}
+      <span style="color:var(--text-bright);font-size:12px">${a.market}</span>
+      <span style="color:var(--text-dim)">${a.dir==='above'?'>':'<'} ${a.price.toFixed(2)}</span>
+      ${a.triggered?'<span class="alert-triggered">⚡ TRIGGERED</span>':''}
       <button class="alert-delete" onclick="removeAlert(${a.id})">✕</button>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
-
-function checkAlerts() {
-  let anyTriggered = false;
-  alerts.forEach(a => {
-    const current = getLatest(a.key);
-    const wasTriggered = a.triggered;
-    if (a.dir === 'above' && current >= a.price) a.triggered = true;
-    if (a.dir === 'below' && current <= a.price) a.triggered = true;
-    if (a.triggered && !wasTriggered) {
-      showNotif(`⚡ ALERT: ${a.market} ${a.dir === 'above' ? '>' : '<'} ${a.price.toFixed(2)} | Current: ${current.toFixed(2)}`);
-      anyTriggered = true;
-    }
+function checkAlerts(){
+  let any=false;
+  alerts.forEach(a=>{
+    const cur=getLatest(a.key),was=a.triggered;
+    if(a.dir==='above'&&cur>=a.price) a.triggered=true;
+    if(a.dir==='below'&&cur<=a.price) a.triggered=true;
+    if(a.triggered&&!was){showNotif(`⚡ ALERT: ${a.market} ${a.dir==='above'?'>':'<'} ${a.price.toFixed(2)} | Current: ${cur.toFixed(2)}`);any=true;}
   });
-  if (anyTriggered) { saveAlerts(); renderAlerts(); }
+  if(any){saveAlerts();renderAlerts();}
 }
 
-function showNotif(msg) {
-  const el = document.createElement('div');
-  el.className = 'notification';
-  el.textContent = msg;
-  document.body.appendChild(el);
-  setTimeout(() => el.remove(), 3500);
-}
-
-// ============================================================
+// ════════════════════════════════════════════════════════════════
 // TAB SWITCHING
-// ============================================================
-function switchTab(name, el) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+// ════════════════════════════════════════════════════════════════
+function switchTab(name, el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   el.classList.add('active');
-  document.getElementById('tab-' + name).classList.add('active');
-
-  if (name === 'correlation') {
-    setTimeout(updateCorrelation, 50);
-  }
+  document.getElementById('tab-'+name).classList.add('active');
+  if(name==='correlation') setTimeout(updateCorrelation,50);
+  if(name==='monthly' && mDataLoaded) setTimeout(renderMonthly,50);
+  else if(name==='monthly' && !mDataLoaded) setMStatus('','SOURCESタブから energy_data.csv を読み込んでください');
 }
 
-// ============================================================
-// REFRESH
-// ============================================================
-function refreshData() {
-  initData(); // re-fetches live data
+// ════════════════════════════════════════════════════════════════
+// NOTIFICATION
+// ════════════════════════════════════════════════════════════════
+function showNotif(msg){
+  const el=document.createElement('div');
+  el.className='notification'; el.textContent=msg;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),3500);
 }
 
-// ============================================================
+// ════════════════════════════════════════════════════════════════
 // INIT
-// ============================================================
-initData();
+// ════════════════════════════════════════════════════════════════
+_initPlaceholder();
+initBaseDate();
 renderAlerts();
-
-
+autoFetchCSV();
 </script>
-
 </body>
 </html>
