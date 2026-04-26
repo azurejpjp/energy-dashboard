@@ -379,6 +379,7 @@
               <button class="range-btn"        onclick="setRange(365, this)">1Y</button>
               <button class="range-btn"        onclick="setRange(1095,this)">3Y</button>
               <button class="range-btn"        onclick="setRange(1825,this)">5Y</button>
+              <button class="range-btn"        onclick="setRange(3650,this)">10Y</button>
             </div>
           </div>
           <div class="chart-canvas-wrap"><canvas id="gasChart"></canvas></div>
@@ -406,6 +407,7 @@
               <button class="range-btn"        onclick="setRange2(365, this)">1Y</button>
               <button class="range-btn"        onclick="setRange2(1095,this)">3Y</button>
               <button class="range-btn"        onclick="setRange2(1825,this)">5Y</button>
+              <button class="range-btn"        onclick="setRange2(3650,this)">10Y</button>
             </div>
           </div>
           <div class="chart-canvas-wrap"><canvas id="powerChart"></canvas></div>
@@ -454,6 +456,7 @@
           <option value="24" selected>24ヶ月</option>
           <option value="36">36ヶ月</option>
           <option value="60">60ヶ月</option>
+          <option value="120">120ヶ月（10年）</option>
         </select>
       </div>
 
@@ -550,6 +553,7 @@
           <option value="90" selected>3ヶ月</option>
           <option value="365">1年</option>
           <option value="1095">3年</option>
+          <option value="3650">10年</option>
         </select>
       </div>
       <div class="corr-grid">
